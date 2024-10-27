@@ -205,8 +205,8 @@ Distributed under the MIT License. See [LICENSE][license-url] for more informati
 [issues-shield]: https://img.shields.io/github/issues/YarynaRachkevych1/python-logo.svg?style=for-the-badge
 [issues-url]: https://github.com/YarynaRachkevych1/python-logo/issues
 [license-shield]: https://img.shields.io/github/license/YarynaRachkevych1/python-logo.svg?style=for-the-badge
-[license-url]: https://github.com/YarynaRachkevych1/python-logo/blob/master/LICENSE
-[product-screenshot]: https://github.com/YarynaRachkevych1/python-logo/blob/master/images/screenshot.png
+[license-url]: https://github.com/YarynaRachkevych1/python-logo/blob/main/LICENSE
+[product-screenshot]: https://github.com/YarynaRachkevych1/python-logo/raw/main/images/screenshot.png
 [logo-url]: https://en.wikipedia.org/wiki/Logo_(programming_language)
 [uwr-url]: https://rekrutacja.uni.wroc.pl/kierunek/informatyka-i-stopnia-stacjonarne-licencjackie-i-inzynierskie
 [flask-url]: https://flask.palletsprojects.com/en/stable
