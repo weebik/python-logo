@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request
 
 main = Blueprint("main", __name__)
 
@@ -9,7 +9,7 @@ def index_get() -> str:
 
     :return: Rendered template with homepage.
     """
-    return render_template("index.html")
+    return render_template("index.html", code="")
 
 
 @main.route("/", methods=["POST"])
@@ -18,6 +18,6 @@ def index_post() -> str:
 
     :return: Redirect response to homepage.
     """
-    code = request.form["code"]
-    print(code)
-    return redirect("/")
+    user_code = request.form["code"]
+    print(user_code)
+    return render_template("index.html", code=user_code)
