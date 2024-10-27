@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request
 
 main = Blueprint("main", __name__)
 
@@ -20,4 +20,4 @@ def index_post() -> str:
     """
     user_code = request.form["code"]
     print(user_code)
-    return render_template("index.html", code=user_code) 
+    return render_template("index.html", code=user_code)
