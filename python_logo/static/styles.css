@@ -85,7 +85,7 @@ header {
   resize: none;
   background-color: #1e1e1e;
   color: white;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
 }
 
 .textarea:focus {
