@@ -93,21 +93,21 @@ You can install the project in two ways: using `pip` or `poetry`.
 #### Using pip
 
 1. Clone the repository:
-   
+
    ```sh
    git clone https://github.com/YarynaRachkevych1/python-logo.git
    cd python-logo
    ```
 
 2. Create a virtual environment:
-   
+
    ```sh
    python -m venv venv
    source venv/bin/activate
    ```
 
 3. Install the project with dependencies:
-   
+
    ```sh
    pip install -e .
    ```
@@ -115,14 +115,14 @@ You can install the project in two ways: using `pip` or `poetry`.
 #### Using Poetry
 
 1. Clone the repository:
-   
+
    ```sh
    git clone https://github.com/YarynaRachkevych1/python-logo.git
    cd python-logo
    ```
 
 2. Install the project with dependencies:
-   
+
    ```sh
    poetry install
    ```
@@ -139,13 +139,13 @@ To run the application, you can use one of the following methods depending on yo
 #### Using pip
 
 1. Ensure your virtual environment is activated:
-   
+
    ```sh
    source venv/bin/activate
    ```
 
 2. Run the application:
-   
+
    ```sh
    python app.py
    ```
@@ -153,7 +153,7 @@ To run the application, you can use one of the following methods depending on yo
 #### Using Poetry
 
 1. Run the application within the Poetry environment:
-   
+
    ```sh
    poetry run python app.py
    ```
@@ -167,13 +167,11 @@ To run the application, you can use one of the following methods depending on yo
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-Before submitting a pull request, please ensure your code meets the following requirements:
+Before commiting, please ensure you've installed pre-commit hooks:
 
-- Check your code with `pylint` to ensure it adheres to the coding standards.
-- Use `isort` to sort your imports.
-- Format your code with `black`.
-- Run tests using `pytest` to ensure your changes do not break existing functionality.
-- If you are adding new functionality, please add corresponding `pytest` tests in the `tests` folder.
+```bash
+pre-commit install
+```
 
 ### Top contributors:
 
@@ -205,8 +203,8 @@ Distributed under the MIT License. See [LICENSE][license-url] for more informati
 [issues-shield]: https://img.shields.io/github/issues/YarynaRachkevych1/python-logo.svg?style=for-the-badge
 [issues-url]: https://github.com/YarynaRachkevych1/python-logo/issues
 [license-shield]: https://img.shields.io/github/license/YarynaRachkevych1/python-logo.svg?style=for-the-badge
-[license-url]: https://github.com/YarynaRachkevych1/python-logo/blob/master/LICENSE
-[product-screenshot]: https://github.com/YarynaRachkevych1/python-logo/blob/master/images/screenshot.png
+[license-url]: https://github.com/YarynaRachkevych1/python-logo/blob/main/LICENSE
+[product-screenshot]: https://github.com/YarynaRachkevych1/python-logo/raw/main/images/screenshot.png
 [logo-url]: https://en.wikipedia.org/wiki/Logo_(programming_language)
 [uwr-url]: https://rekrutacja.uni.wroc.pl/kierunek/informatyka-i-stopnia-stacjonarne-licencjackie-i-inzynierskie
 [flask-url]: https://flask.palletsprojects.com/en/stable

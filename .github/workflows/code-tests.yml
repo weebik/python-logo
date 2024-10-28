@@ -11,16 +11,18 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.12"
       - name: Install poetry
         uses: abatilo/actions-poetry@v2
       - name: Install the project
         run: poetry install
-      - name: Check isort
-        run: poetry run isort --check . | grep -q "ERROR" && false || true
-      - name: Check black
-        run: poetry run black --check .
-      - name: Check pylint
-        run: poetry run pylint .
+      - name: Check ruff
+        run: poetry run ruff check --no-fix
+      - name: Check mypy
+        run: poetry run mypy .
+      - name: Check prettier
+        uses: creyD/prettier_action@v4.3
+        with:
+          dry: True
       - name: Run pytest
-        run: poetry run pytest
+        run: poetry run pytest -v

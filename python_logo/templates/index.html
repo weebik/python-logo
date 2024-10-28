@@ -1,14 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>python-logo</title>
-    <link rel="stylesheet" href="../static/styles.css" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
   </head>
   <body>
     <header>
-      <img src="../static/assets/logo.png" alt="Logo" class="logo" />
+      <img
+        src="{{ url_for('static', filename='assets/logo.png') }}"
+        alt="Logo"
+        class="logo"
+      />
       <h1>Logo Playground</h1>
     </header>
     <div class="container">
@@ -22,13 +29,13 @@
           <textarea
             id="codeTextarea"
             class="textarea"
-            value="{{ code }}"
+            value=""
             placeholder="Type your Logo code here"
           ></textarea>
         </div>
       </div>
       <div class="right-container">*Turtle here*</div>
     </div>
-    <script src="../static/script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>
