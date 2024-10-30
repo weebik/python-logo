@@ -23,15 +23,16 @@
         <div class="button-bar">
           <button onclick="sendCode()">Run</button>
           <button>Stop</button>
-          <button>Button</button>
+        </div>
+        <div class="tabs">
+          <ul class="tabList" id="tabList">
+            <li class="addTabButton" id="addTabButton">
+              <button onclick="addTab()">+</button>
+            </li>
+          </ul>
         </div>
         <div class="textbox">
-          <textarea
-            id="codeTextarea"
-            class="textarea"
-            value=""
-            placeholder="Type your Logo code here"
-          ></textarea>
+          <div class="tabContentContainer" id="tabContentContainer"></div>
         </div>
       </div>
       <div class="right-container">*Turtle here*</div>
