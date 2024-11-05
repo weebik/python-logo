@@ -1,5 +1,6 @@
 from flask import Flask
 
+from .parser import parse_logo  # noqa: F401
 from .routes import main
 
 
