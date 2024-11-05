@@ -23,8 +23,13 @@ def index_post() -> tuple[str | dict[str, str], int]:
         tuple[str | dict[str, str], int]: A response with status code.
     """
     user_code = request.form.get("code")
-    if user_code is None:
-        user_code = ""
+    if user_code is None or user_code == "":
+        return "", 204
+    user_code = user_code.strip()
+
     tree = parse_logo(user_code)
     print(tree)
+
+    if "error" in tree:
+        return tree, 400
     return tree, 200

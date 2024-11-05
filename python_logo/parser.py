@@ -73,7 +73,8 @@ def parse_logo(code: str) -> dict[str, str]:
     Returns:
         dict[str, str]: The tokenized representation of the code.
     """
-    if code.strip() == "":
+    code = code.strip()
+    if code == "":
         return {}
     parser = Lark(logo_grammar, parser="lalr", transformer=LogoJsonTransformer())
     try:
