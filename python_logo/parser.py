@@ -5,8 +5,8 @@ from .messages import INVALID_COMMAND_ERROR_MESSAGE, UNEXPECTED_TOKEN_ERROR_MESS
 
 logo_grammar = """
 start: command+
-command: ((forward | backward | left | right) number) \
-         | (showturtle | hideturtle | penup | pendown)
+command: ((forward | backward | left | right ) number) \
+         | (showturtle | hideturtle | penup |pendown)
 forward: "forward" | "fd"
 backward: "backward" | "bk"
 left: "left" | "lt"
@@ -30,11 +30,11 @@ class LogoJsonTransformer(Transformer):
         return {"commands": items}
 
     def command(self, items: list[str]) -> dict[str, str]:  # noqa: D102
-        command = items[0]
-        if command in ["forward", "backward", "left", "right"]:
+        name = items[0]
+        if name in ["forward", "backward", "left", "right"]:
             number = items[1]
-            return {"command": command, "value": number}
-        return {"command": command}
+            return {"name": name, "value": number}
+        return {"name": name}
 
     def forward(self, items: list[str]) -> str:  # noqa: D102, ARG002
         return "forward"
