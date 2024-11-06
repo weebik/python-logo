@@ -51,11 +51,24 @@ function resizeCanvas() {
   imageCanvas.height = height;
 }
 
+
 /**
  * Sends the code from the textarea to the server via a POST request.
  * The server processes the code and sends back the turtle commands.
  * @function sendCode
  */
+
+/*
+*functions implemented in js turtle library
+*/
+const functions = new Map([
+  ["forward", function(n){forward(n)}],
+  ["right", function(n) {right(n)}],
+  ["left", function(n){left(n)}],
+  ["backward", function(n){left(180);forward(n);left(180);}],
+  ["penup", function(){penup()}],
+  ["pendown", function(){pendown()}]
+]);
 function sendCode() {
   const code = document.getElementById("codeTextarea").value;
   fetch("/", {
@@ -75,15 +88,7 @@ function sendCode() {
     .then((data) => {
       if (data.commands) {
         data.commands.forEach((command) => {
-          if (command.command === "forward") {
-            forward(command.value);
-          } else if (command.command === "right") {
-            right(command.value);
-          } else if (command.command === "left") {
-            left(command.value);
-          } else if (command.command === "backward") {
-            backward(command.value);
-          }
+          functions.get(command.name)(command.value)
         });
       }
     })
