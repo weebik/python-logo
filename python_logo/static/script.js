@@ -1,15 +1,11 @@
-var element = document.getElementById("resizable");
-var resizer = document.createElement("div");
+const element = document.getElementById("resizable");
+const resizer = document.createElement("div");
+const turtleCanvas = document.getElementById("turtlecanvas");
+const imageCanvas = document.getElementById("imagecanvas");
+
 resizer.className = "resizer";
 element.appendChild(resizer);
 resizer.addEventListener("mousedown", initResize, false);
-
-let tabCount = 0;
-let currentTabId = null;
-
-document.addEventListener("DOMContentLoaded", () => {
-  addTab();
-});
 
 /**
  * Initiates the resizing process by adding mouse event listeners.
@@ -41,103 +37,55 @@ function stopResizing(e) {
 }
 
 /**
+ * Resizes the turtle canvas and image canvas to fit the right container.
+ * @function resizeCanvas
+ */
+function resizeCanvas() {
+  const container = document.querySelector(".right-container");
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+
+  turtleCanvas.width = width;
+  turtleCanvas.height = height;
+  imageCanvas.width = width;
+  imageCanvas.height = height;
+}
+
+/**
  * Sends the code from the textarea to the server via a POST request.
+ * The server processes the code and sends back the turtle commands.
  * @function sendCode
  */
 function sendCode() {
-  if (currentTabId) {
-    const code = document.getElementById(currentTabId).value;
-    fetch("/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({ code: code }),
-    })
-      .then((response) => {
-        if (response.redirected) {
-          window.location.href = response.url;
-        }
-      })
-      .catch((error) => console.error("Error:", error));
-  }
-}
-
-// !!!experimental!!!
-
-/**
- * Add new tab and set it as active
- * @function addTab
- */
-function addTab() {
-  tabCount++;
-  const tabId = `tab${tabCount}`;
-  const tabList = document.getElementById("tabList");
-  const tabContentContainer = document.getElementById("tabContentContainer");
-
-  const newTabButton = document.createElement("li");
-  newTabButton.classList.add("tab");
-  newTabButton.innerHTML = `Tab ${tabCount} <span class="close-btn" onclick="removeTab('${tabId}')">×</span>`;
-  newTabButton.onclick = (e) => {
-    if (!e.target.classList.contains("close-btn")) setActiveTab(tabId);
-  };
-  newTabButton.id = `${tabId}-button`;
-
-  tabList.insertBefore(newTabButton, tabList.lastElementChild);
-
-  const newTextArea = document.createElement("textarea");
-  newTextArea.id = tabId;
-  newTextArea.className = "textarea";
-  newTextArea.placeholder = `Type your code in Terminal ${tabCount}`;
-  newTextArea.style.display = "none";
-  tabContentContainer.appendChild(newTextArea);
-  setActiveTab(tabId);
-}
-
-/**
- * Set tab as active and display its content
- * @function setActiveTab
- * @param {string} tabId
- */
-function setActiveTab(tabId) {
-  if (currentTabId) {
-    document.getElementById(currentTabId).style.display = "none";
-    document
-      .getElementById(`${currentTabId}-button`)
-      .classList.remove("active");
-  }
-  document.getElementById(tabId).style.display = "block";
-  document.getElementById(`${tabId}-button`).classList.add("active");
-  currentTabId = tabId;
-}
-
-/**
- * Delete active tab and content, find new tab and set as active
- * @function removeTab
- * @param {string} tabId
- */
-function removeTab(tabId) {
-  const tabButton = document.getElementById(`${tabId}-button`);
-  const tabContent = document.getElementById(tabId);
-  const tabList = document.getElementById("tabList");
-
-  if (currentTabId === tabId) {
-    const remainingTabs = tabList.querySelectorAll("li.tab");
-    let nextTabId = null;
-
-    for (const tab of remainingTabs) {
-      const id = tab.id.replace("-button", "");
-      if (id !== tabId) {
-        nextTabId = id;
-        break;
+  const code = document.getElementById("codeTextarea").value;
+  fetch("/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({ code: code }),
+  })
+    .then((response) => {
+      if (response.redirected) {
+        window.location.href = response.url;
+      } else {
+        return response.json();
       }
-    }
-    if (nextTabId) {
-      setActiveTab(nextTabId);
-    } else {
-      addTab();
-    }
-  }
-  tabButton.remove();
-  tabContent.remove();
+    })
+    .then((data) => {
+      if (data.commands) {
+        data.commands.forEach((command) => {
+          if (command.command === "forward") {
+            forward(command.value);
+          } else if (command.command === "right") {
+            right(command.value);
+          } else if (command.command === "left") {
+            left(command.value);
+          } else if (command.command === "backward") {
+            backward(command.value);
+          }
+        });
+      }
+    })
+    .catch((error) => console.error("Error:", error));
 }

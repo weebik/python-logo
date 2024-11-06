@@ -20,23 +20,38 @@
     </header>
     <div class="container">
       <div class="left-container" id="resizable">
-        <div class="tabs">
-          <ul class="tabList" id="tabList">
-            <li class="addTabButton" id="addTabButton">
-              <button onclick="addTab()">+</button>
-            </li>
-          </ul>
-        </div>
         <div class="button-bar">
           <button onclick="sendCode()">Run</button>
           <button>Stop</button>
         </div>
         <div class="textbox">
-          <div class="tabContentContainer" id="tabContentContainer"></div>
+          <textarea
+            id="codeTextarea"
+            class="textarea"
+            placeholder="Type your Logo code here"
+          ></textarea>
         </div>
       </div>
-      <div class="right-container">*Turtle here*</div>
+      <div class="right-container">
+        <canvas
+          id="turtlecanvas"
+          width="600"
+          height="600"
+          style="width: 100%; height: auto"
+        ></canvas>
+        <canvas
+          class="imagecanvas"
+          id="imagecanvas"
+          width="600"
+          height="600"
+          style="display: none; width: 100%; height: auto"
+        ></canvas>
+      </div>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script
+      type="text/javascript"
+      src="https://rawgit.com/hanumanum/js-turtle/master/lib/library.js"
+    ></script>
   </body>
 </html>
