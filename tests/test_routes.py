@@ -3,7 +3,6 @@ import pytest
 from python_logo import create_app
 
 STATUS_CODE_OK = 200
-STATUS_CODE_NO_CONTENT = 204
 
 
 @pytest.fixture
@@ -21,5 +20,6 @@ def test_index(client):
 
 
 def test_index_post(client):
-    response = client.post("/")
-    assert response.status_code == STATUS_CODE_NO_CONTENT
+    data = {"code": ""}
+    response = client.post("/", data=data)
+    assert response.status_code == STATUS_CODE_OK
