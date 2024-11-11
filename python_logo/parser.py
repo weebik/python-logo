@@ -1,7 +1,7 @@
 import lark.exceptions
 from lark import Lark, Transformer
 
-from .messages import INVALID_COMMAND_ERROR_MESSAGE, UNEXPECTED_TOKEN_ERROR_MESSAGE
+from .exceptions import ParserInvalidCommandError, ParserUnexpectedTokenError
 
 logo_grammar = """
 start: command+
@@ -64,23 +64,24 @@ class LogoJsonTransformer(Transformer):
         return int(items[0])
 
 
-def parse_logo(code: str) -> dict[str, str]:
+def parse_logo(code: str) -> dict:
     """Parses the given Logo code and returns its JSON representation.
 
     Args:
-        code (str | None): The Logo code to be parsed.
+        code (str): The Logo code to be parsed.
 
     Returns:
-        dict[str, str]: The tokenized representation of the code.
+        dict: The tokenized representation of the code.
     """
     code = code.strip()
     if code == "":
-        return {}
+        return {"commands": []}
+
     parser = Lark(logo_grammar, parser="lalr", transformer=LogoJsonTransformer())
+
     try:
-        tree = parser.parse(code)
-    except lark.exceptions.UnexpectedCharacters:
-        tree = {"error": INVALID_COMMAND_ERROR_MESSAGE}
-    except lark.exceptions.UnexpectedToken:
-        tree = {"error": UNEXPECTED_TOKEN_ERROR_MESSAGE}
-    return tree
+        return parser.parse(code)
+    except lark.exceptions.UnexpectedCharacters as err:
+        raise ParserInvalidCommandError from err
+    except lark.exceptions.UnexpectedToken as err:
+        raise ParserUnexpectedTokenError from err
