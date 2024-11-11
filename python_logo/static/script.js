@@ -51,24 +51,61 @@ function resizeCanvas() {
   imageCanvas.height = height;
 }
 
+/**
+ * Execution of functions implemented in js turtle library.
+ * @function executeCommand
+ * @param {}
+ */
+function executeCommand(command) {
+  const functions = new Map([
+    [
+      "forward",
+      function (n) {
+        forward(n);
+      },
+    ],
+    [
+      "right",
+      function (n) {
+        right(n);
+      },
+    ],
+    [
+      "left",
+      function (n) {
+        left(n);
+      },
+    ],
+    [
+      "backward",
+      function (n) {
+        left(180);
+        forward(n);
+        left(180);
+      },
+    ],
+    [
+      "penup",
+      function () {
+        penup();
+      },
+    ],
+    [
+      "pendown",
+      function () {
+        pendown();
+      },
+    ],
+  ]);
+
+  functions.get(command.name)(command.value);
+}
 
 /**
  * Sends the code from the textarea to the server via a POST request.
  * The server processes the code and sends back the turtle commands.
  * @function sendCode
  */
-
-/*
-*functions implemented in js turtle library
-*/
-const functions = new Map([
-  ["forward", function(n){forward(n)}],
-  ["right", function(n) {right(n)}],
-  ["left", function(n){left(n)}],
-  ["backward", function(n){left(180);forward(n);left(180);}],
-  ["penup", function(){penup()}],
-  ["pendown", function(){pendown()}]
-]);
 function sendCode() {
   const code = document.getElementById("codeTextarea").value;
   fetch("/", {
@@ -87,9 +124,7 @@ function sendCode() {
     })
     .then((data) => {
       if (data.commands) {
-        data.commands.forEach((command) => {
-          functions.get(command.name)(command.value)
-        });
+        data.commands.forEach((command) => executeCommand(command));
       }
     })
     .catch((error) => console.error("Error:", error));

@@ -5,7 +5,7 @@ from .messages import INVALID_COMMAND_ERROR_MESSAGE, UNEXPECTED_TOKEN_ERROR_MESS
 
 logo_grammar = """
 start: command+
-command: ((forward | backward | left | right ) number) \
+command: ((forward | backward | left | right) number) \
          | (showturtle | hideturtle | penup |pendown)
 forward: "forward" | "fd"
 backward: "backward" | "bk"
