@@ -29,7 +29,7 @@ def interpreter(tree: lark.Tree) -> Generator[dict, None, None]:
     """Generates commands for the turtle from the tree returned by parser."""
     for command in tree.children:
         if command == []:
-            yield
+            yield ""
         c = command.children[0]
         match c.data:
             case "forward":
