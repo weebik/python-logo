@@ -45,13 +45,17 @@ def interpreter(tree: lark.Tree) -> Generator[dict, None, None]:
                 yield {"name": "penup"}
             case "pendown":
                 yield {"name": "pendown"}
+            case "showturtle":
+                yield {"name": "showturtle"}
+            case "hideturtle":
+                yield {"name": "hideturtle"}
 
 
 def interpreter_as_list(generator: Generator[dict, None, None]) -> dict:
     """Converts generator of commands for the turtle to a list of dicts."""
     command_list = []
     for command in generator:
-        list.append(command)
+        command_list = command_list.append(command)
     return {"commands": command_list}
 
 
