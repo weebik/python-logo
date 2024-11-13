@@ -54,9 +54,11 @@ def interpreter(tree: lark.Tree) -> Generator[dict, None, None]:
 def interpreter_as_list(generator: Generator[dict, None, None]) -> dict:
     """Converts generator of commands for the turtle to a list of dicts."""
     command_list = []
-    for command in generator:
-        command_list = command_list.append(command)
-    return {"commands": command_list}
+    try:
+        while True:
+            command_list.append(next(generator))
+    except StopIteration:
+        return {"commands": command_list}
 
 
 def parse_logo(code: str) -> lark.Tree:
