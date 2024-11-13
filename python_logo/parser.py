@@ -31,13 +31,25 @@ def interpreter(tree: lark.Tree) -> Generator[dict, None, None]:
         c = command.children[0]
         match c.data:
             case "forward":
-                yield {"name": "forward", "value": command.children[1].children[0]}
+                yield {
+                    "name": "forward",
+                    "value": int(str(command.children[1].children[0])),
+                }
             case "backward":
-                yield {"name": "backward", "value": command.children[1].children[0]}
+                yield {
+                    "name": "backward",
+                    "value": int(str(command.children[1].children[0])),
+                }
             case "left":
-                yield {"name": "left", "value": command.children[1].children[0]}
+                yield {
+                    "name": "left",
+                    "value": int(str(command.children[1].children[0])),
+                }
             case "right":
-                yield {"name": "right", "value": command.children[1].children[0]}
+                yield {
+                    "name": "right",
+                    "value": int(str(command.children[1].children[0])),
+                }
             case "penup":
                 yield {"name": "penup"}
             case "pendown":
