@@ -27,8 +27,6 @@ number: SIGNED_INT
 
 def interpreter(tree: lark.Tree) -> Generator[dict, None, None]:
     """Generates commands for the turtle from the tree returned by parser."""
-    if tree.children == []:
-        yield ""
     for command in tree.children:
         c = command.children[0]
         match c.data:
@@ -77,7 +75,7 @@ def parse_logo(code: str) -> lark.Tree:
     """
     code = code.strip()
     if code == "":
-        return {"commands": []}
+        return lark.Tree("start", [])
 
     parser = Lark(logo_grammar, parser="lalr")
 
