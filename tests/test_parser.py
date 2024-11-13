@@ -33,7 +33,9 @@ def test_left():
     left_alias_input = "lt 90"
     left_response = {"commands": [{"name": "left", "value": 90}]}
     assert interpreter_as_list(interpreter(parse_logo(left_input))) == left_response
-    assert parse_logo(left_alias_input) == left_response
+    assert (
+        interpreter_as_list(interpreter(parse_logo(left_alias_input))) == left_response
+    )
 
 
 def test_right():
