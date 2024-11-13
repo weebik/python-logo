@@ -1,5 +1,5 @@
 from .exceptions import ParserInvalidCommandError, ParserUnexpectedTokenError
-from .parser import parse_logo
+from .parser import interpreter, interpreter_as_list, parse_logo
 
 
 def parse_logo_http_response(code: str) -> tuple[dict, int]:
@@ -12,7 +12,7 @@ def parse_logo_http_response(code: str) -> tuple[dict, int]:
         tuple[dict, int]: A HTTP response.
     """
     try:
-        return parse_logo(code), 200
+        return interpreter_as_list(interpreter(parse_logo(code))), 200
     except ParserInvalidCommandError as e:
         return {"error": str(e)}, 400
     except ParserUnexpectedTokenError as e:

@@ -1,5 +1,7 @@
+from collections.abc import Generator
+
 import lark.exceptions
-from lark import Lark, Transformer
+from lark import Lark
 
 from .exceptions import ParserInvalidCommandError, ParserUnexpectedTokenError
 
@@ -23,48 +25,37 @@ number: SIGNED_INT
 """
 
 
-class LogoJsonTransformer(Transformer):
-    """Transforms Logo language code into JSON format."""
-
-    def start(self, items: list[str]) -> dict[str, list[str]]:  # noqa: D102
-        return {"commands": items}
-
-    def command(self, items: list[str]) -> dict[str, str]:  # noqa: D102
-        name = items[0]
-        if name in ["forward", "backward", "left", "right"]:
-            number = items[1]
-            return {"name": name, "value": number}
-        return {"name": name}
-
-    def forward(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "forward"
-
-    def backward(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "backward"
-
-    def left(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "left"
-
-    def right(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "right"
-
-    def showturtle(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "showturtle"
-
-    def hideturtle(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "hideturtle"
-
-    def penup(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "penup"
-
-    def pendown(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "pendown"
-
-    def number(self, items: list[str]) -> int:  # noqa: D102
-        return int(items[0])
+def interpreter(tree: lark.Tree) -> Generator[dict, None, None]:
+    """Generates commands for the turtle from the tree returned by parser."""
+    for command in tree.children:
+        c = command.children[0]
+        match c.data:
+            case "forward":
+                yield {"name": "forward", "value": str(command.children[1].children[0])}
+            case "backward":
+                yield {
+                    "name": "backward",
+                    "value": str(command.children[1].children[0]),
+                }
+            case "left":
+                yield {"name": "left", "value": str(command.children[1].children[0])}
+            case "right":
+                yield {"name": "right", "value": str(command.children[1].children[0])}
+            case "penup":
+                yield {"name": "penup"}
+            case "pendown":
+                yield {"name": "pendown"}
 
 
-def parse_logo(code: str) -> dict:
+def interpreter_as_list(generator: Generator[dict, None, None]) -> dict:
+    """Converts generator of commands for the turtle to a list of dicts."""
+    command_list = []
+    for command in generator:
+        list.append(command)
+    return {"commands": command_list}
+
+
+def parse_logo(code: str) -> lark.Tree:
     """Parses the given Logo code and returns its JSON representation.
 
     Args:
@@ -77,7 +68,7 @@ def parse_logo(code: str) -> dict:
     if code == "":
         return {"commands": []}
 
-    parser = Lark(logo_grammar, parser="lalr", transformer=LogoJsonTransformer())
+    parser = Lark(logo_grammar, parser="lalr")
 
     try:
         return parser.parse(code)
