@@ -28,6 +28,8 @@ number: SIGNED_INT
 def interpreter(tree: lark.Tree) -> Generator[dict, None, None]:
     """Generates commands for the turtle from the tree returned by parser."""
     for command in tree.children:
+        if command == []:
+            yield
         c = command.children[0]
         match c.data:
             case "forward":
@@ -50,14 +52,8 @@ def interpreter(tree: lark.Tree) -> Generator[dict, None, None]:
                     "name": "right",
                     "value": int(str(command.children[1].children[0])),
                 }
-            case "penup":
-                yield {"name": "penup"}
-            case "pendown":
-                yield {"name": "pendown"}
-            case "showturtle":
-                yield {"name": "showturtle"}
-            case "hideturtle":
-                yield {"name": "hideturtle"}
+            case _:
+                yield {"name": str(c.data)}
 
 
 def interpreter_as_list(generator: Generator[dict, None, None]) -> dict:
