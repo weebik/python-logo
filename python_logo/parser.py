@@ -29,7 +29,6 @@ number: SIGNED_INT
 
 def interpreter(tree: lark.Tree) -> Generator[dict, None, None]:
     """Generates commands for the turtle from the tree returned by parser."""
-    
     for command in tree.children:
         c = command.children[0]
         match c.data:
