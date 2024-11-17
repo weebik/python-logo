@@ -9,7 +9,8 @@ logo_grammar = """
 start: command+
 command: ((forward | backward | left | right) number) \
          | (showturtle | hideturtle | penup | pendown) \
-         | (repeat) number "[" command+ "]"
+         | ((repeat) number "[" command+ "]") \
+         | ((if) (true | false) "[" command+ "]")
 forward: "forward" | "fd"
 backward: "backward" | "bk"
 left: "left" | "lt"
@@ -19,6 +20,9 @@ hideturtle: "hideturtle" | "ht"
 penup: "penup" | "pu"
 pendown: "pendown" | "pd"
 repeat: "repeat"
+if: "if"
+true: "true" | "True"
+false: "false" | "False"
 number: SIGNED_INT
 
 %import common.SIGNED_INT
@@ -36,9 +40,13 @@ def interpreter(tree: lark.Tree) -> Generator[dict, None, None]:
                 repeat_count = int(str(command.children[1].children[0]))
                 for _ in range(repeat_count):
                     yield from interpreter(lark.Tree("repeat", command.children[2:]))
+            case "if":
+                condition = str(command.children[1].data)
+                if condition == "true":
+                    yield from interpreter(lark.Tree("if", command.children[2:]))
             case "forward" | "backward" | "left" | "right":
                 yield {
-                    "name": c.data,
+                    "name": str(c.data),
                     "value": int(str(command.children[1].children[0]))
                 }
             case _:
@@ -71,6 +79,7 @@ def parse_logo(code: str) -> lark.Tree:
     parser = Lark(logo_grammar, parser="lalr")
 
     try:
+        print(parser.parse(code).pretty())
         return parser.parse(code)
     except lark.exceptions.UnexpectedCharacters as err:
         raise ParserInvalidCommandError from err
