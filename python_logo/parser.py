@@ -8,7 +8,8 @@ from .exceptions import ParserInvalidCommandError, ParserUnexpectedTokenError
 logo_grammar = """
 start: command+
 command: ((forward | backward | left | right) number) \
-         | (showturtle | hideturtle | penup |pendown)
+         | (showturtle | hideturtle | penup | pendown) \
+         | (repeat) number "[" command+ "]"
 forward: "forward" | "fd"
 backward: "backward" | "bk"
 left: "left" | "lt"
@@ -17,6 +18,7 @@ showturtle: "showturtle" | "st"
 hideturtle: "hideturtle" | "ht"
 penup: "penup" | "pu"
 pendown: "pendown" | "pd"
+repeat: "repeat"
 number: SIGNED_INT
 
 %import common.SIGNED_INT
@@ -27,28 +29,18 @@ number: SIGNED_INT
 
 def interpreter(tree: lark.Tree) -> Generator[dict, None, None]:
     """Generates commands for the turtle from the tree returned by parser."""
+    
     for command in tree.children:
         c = command.children[0]
         match c.data:
-            case "forward":
+            case "repeat":
+                repeat_count = int(str(command.children[1].children[0]))
+                for _ in range(repeat_count):
+                    yield from interpreter(lark.Tree("repeat", command.children[2:]))
+            case "forward" | "backward" | "left" | "right":
                 yield {
-                    "name": "forward",
-                    "value": int(str(command.children[1].children[0])),
-                }
-            case "backward":
-                yield {
-                    "name": "backward",
-                    "value": int(str(command.children[1].children[0])),
-                }
-            case "left":
-                yield {
-                    "name": "left",
-                    "value": int(str(command.children[1].children[0])),
-                }
-            case "right":
-                yield {
-                    "name": "right",
-                    "value": int(str(command.children[1].children[0])),
+                    "name": c.data,
+                    "value": int(str(command.children[1].children[0]))
                 }
             case _:
                 yield {"name": str(c.data)}
