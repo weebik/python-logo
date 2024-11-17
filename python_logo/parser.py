@@ -1,12 +1,14 @@
-import lark.exceptions
-from lark import Lark, Transformer
+from collections.abc import Generator
 
-from .messages import INVALID_COMMAND_ERROR_MESSAGE, UNEXPECTED_TOKEN_ERROR_MESSAGE
+import lark.exceptions
+from lark import Lark
+
+from .exceptions import ParserInvalidCommandError, ParserUnexpectedTokenError
 
 logo_grammar = """
 start: command+
 command: ((forward | backward | left | right) number) \
-         | (showturtle | hideturtle | penup | pendown)
+         | (showturtle | hideturtle | penup |pendown)
 forward: "forward" | "fd"
 backward: "backward" | "bk"
 left: "left" | "lt"
@@ -23,64 +25,63 @@ number: SIGNED_INT
 """
 
 
-class LogoJsonTransformer(Transformer):
-    """Transforms Logo language code into JSON format."""
-
-    def start(self, items: list[str]) -> dict[str, list[str]]:  # noqa: D102
-        return {"commands": items}
-
-    def command(self, items: list[str]) -> dict[str, str]:  # noqa: D102
-        command = items[0]
-        if command in ["forward", "backward", "left", "right"]:
-            number = items[1]
-            return {"command": command, "value": number}
-        return {"command": command}
-
-    def forward(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "forward"
-
-    def backward(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "backward"
-
-    def left(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "left"
-
-    def right(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "right"
-
-    def showturtle(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "showturtle"
-
-    def hideturtle(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "hideturtle"
-
-    def penup(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "penup"
-
-    def pendown(self, items: list[str]) -> str:  # noqa: D102, ARG002
-        return "pendown"
-
-    def number(self, items: list[str]) -> int:  # noqa: D102
-        return int(items[0])
+def interpreter(tree: lark.Tree) -> Generator[dict, None, None]:
+    """Generates commands for the turtle from the tree returned by parser."""
+    for command in tree.children:
+        c = command.children[0]
+        match c.data:
+            case "forward":
+                yield {
+                    "name": "forward",
+                    "value": int(str(command.children[1].children[0])),
+                }
+            case "backward":
+                yield {
+                    "name": "backward",
+                    "value": int(str(command.children[1].children[0])),
+                }
+            case "left":
+                yield {
+                    "name": "left",
+                    "value": int(str(command.children[1].children[0])),
+                }
+            case "right":
+                yield {
+                    "name": "right",
+                    "value": int(str(command.children[1].children[0])),
+                }
+            case _:
+                yield {"name": str(c.data)}
 
 
-def parse_logo(code: str) -> dict[str, str]:
+def interpreter_as_list(generator: Generator[dict, None, None]) -> dict:
+    """Converts generator of commands for the turtle to a list of dicts."""
+    command_list = []
+    try:
+        while True:
+            command_list.append(next(generator))
+    except StopIteration:
+        return {"commands": command_list}
+
+
+def parse_logo(code: str) -> lark.Tree:
     """Parses the given Logo code and returns its JSON representation.
 
     Args:
-        code (str | None): The Logo code to be parsed.
+        code (str): The Logo code to be parsed.
 
     Returns:
-        dict[str, str]: The tokenized representation of the code.
+        dict: The tokenized representation of the code.
     """
     code = code.strip()
     if code == "":
-        return {}
-    parser = Lark(logo_grammar, parser="lalr", transformer=LogoJsonTransformer())
+        return lark.Tree("start", [])
+
+    parser = Lark(logo_grammar, parser="lalr")
+
     try:
-        tree = parser.parse(code)
-    except lark.exceptions.UnexpectedCharacters:
-        tree = {"error": INVALID_COMMAND_ERROR_MESSAGE}
-    except lark.exceptions.UnexpectedToken:
-        tree = {"error": UNEXPECTED_TOKEN_ERROR_MESSAGE}
-    return tree
+        return parser.parse(code)
+    except lark.exceptions.UnexpectedCharacters as err:
+        raise ParserInvalidCommandError from err
+    except lark.exceptions.UnexpectedToken as err:
+        raise ParserUnexpectedTokenError from err
