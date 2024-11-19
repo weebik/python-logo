@@ -1,6 +1,6 @@
 from .exceptions import ParserInvalidCommandError, ParserUnexpectedTokenError
-from .parser import LogoParser
 from .interpreter import LogoInterpreter
+from .parser import LogoParser
 
 
 def parse_logo_http_response(code: str) -> tuple[dict, int]:

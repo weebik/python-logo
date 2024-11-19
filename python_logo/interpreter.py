@@ -1,14 +1,17 @@
-from typing import Generator
+from collections.abc import Generator
 
 import lark.exceptions
+
 
 class LogoInterpreter:
     """Class to interpret parsed Logo programming language commands.
 
     Attributes:
-        commands (Generator | None): A generator that yields commands parsed from the Logo tree structure.
+        commands (Generator | None): A generator that yields commands
+            parsed from the Logo tree structure.
     """
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initializes the LogoInterpreter instance."""
         self.commands = None
 
     def run(self, tree: lark.Tree) -> dict:
@@ -24,11 +27,13 @@ class LogoInterpreter:
                 case "repeat":
                     repeat_count = int(str(command.children[1].children[0]))
                     for _ in range(repeat_count):
-                        yield from self._commands_generator(lark.Tree("repeat", command.children[2:]))
+                        yield from self._commands_generator(lark.Tree("repeat",
+                                                                      command.children[2:]))
                 case "if":
                     condition = str(command.children[1].data)
                     if condition == "true":
-                        yield from self._commands_generator(lark.Tree("if", command.children[2:]))
+                        yield from self._commands_generator(lark.Tree("if",
+                                                                      command.children[2:]))
                 case "forward" | "backward" | "left" | "right":
                     yield {
                         "name": str(c.data),
