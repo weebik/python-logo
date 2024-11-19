@@ -1,5 +1,3 @@
-from collections.abc import Generator
-
 import lark.exceptions
 from lark import Lark
 
@@ -31,57 +29,31 @@ number: SIGNED_INT
 """
 
 
-def interpreter(tree: lark.Tree) -> Generator[dict, None, None]:
-    """Generates commands for the turtle from the tree returned by parser."""
-    for command in tree.children:
-        c = command.children[0]
-        match c.data:
-            case "repeat":
-                repeat_count = int(str(command.children[1].children[0]))
-                for _ in range(repeat_count):
-                    yield from interpreter(lark.Tree("repeat", command.children[2:]))
-            case "if":
-                condition = str(command.children[1].data)
-                if condition == "true":
-                    yield from interpreter(lark.Tree("if", command.children[2:]))
-            case "forward" | "backward" | "left" | "right":
-                yield {
-                    "name": str(c.data),
-                    "value": int(str(command.children[1].children[0]))
-                }
-            case _:
-                yield {"name": str(c.data)}
+class LogoParser:
+    """Class to parse Logo codo into a structured tree using the Lark library.
 
-
-def interpreter_as_list(generator: Generator[dict, None, None]) -> dict:
-    """Converts generator of commands for the turtle to a list of dicts."""
-    command_list = []
-    try:
-        while True:
-            command_list.append(next(generator))
-    except StopIteration:
-        return {"commands": command_list}
-
-
-def parse_logo(code: str) -> lark.Tree:
-    """Parses the given Logo code and returns its JSON representation.
-
-    Args:
-        code (str): The Logo code to be parsed.
-
-    Returns:
-        dict: The tokenized representation of the code.
+    Attributes:
+        None
     """
-    code = code.strip()
-    if code == "":
-        return lark.Tree("start", [])
+    def run(self, code: str) -> lark.Tree:
+        """Parses the given Logo code and returns its JSON representation.
 
-    parser = Lark(logo_grammar, parser="lalr")
+        Args:
+            code (str): The Logo code to be parsed.
 
-    try:
-        print(parser.parse(code).pretty())
-        return parser.parse(code)
-    except lark.exceptions.UnexpectedCharacters as err:
-        raise ParserInvalidCommandError from err
-    except lark.exceptions.UnexpectedToken as err:
-        raise ParserUnexpectedTokenError from err
+        Returns:
+            dict: The tokenized representation of the code.
+        """
+        code = code.strip()
+        if code == "":
+            return lark.Tree("start", [])
+
+        parser = Lark(logo_grammar, parser="lalr")
+
+        try:
+            print(parser.parse(code).pretty())
+            return parser.parse(code)
+        except lark.exceptions.UnexpectedCharacters as err:
+            raise ParserInvalidCommandError from err
+        except lark.exceptions.UnexpectedToken as err:
+            raise ParserUnexpectedTokenError from err
