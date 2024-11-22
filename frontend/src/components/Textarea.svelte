@@ -4,31 +4,27 @@
   export let id = "";
 </script>
 
-<div class="textbox">
-  <textarea id={id} class="textarea" {placeholder} bind:value
-  ></textarea>
+<div class="m-5 h-100">
+  <textarea class="form-control h-100 shadow-none p-4" style="color: #cae5be; background-color: #153246;" {id} {placeholder} bind:value></textarea>
 </div>
 
 <style>
-  .textbox {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-  }
-
-  .textarea {
+  textarea {
     border: none;
-    width: 100%;
-    height: 100%;
     resize: none;
-    background-color: #1e1e1e;
-    color: white;
-    font-family: "Courier New", Courier, monospace;
-    padding: 10px;
+    font-family: "Ubuntu Mono", monospace;
+    border-radius: 1rem;
+    font-size: large;
+    transition: all 0.3s;
   }
 
-  .textarea:focus {
+  textarea::placeholder {
+    user-select: none;
+    color: #627d90;
+  }
+
+  textarea:focus {
     outline: none;
+    background-color: #153246;
   }
 </style>

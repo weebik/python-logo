@@ -4,7 +4,7 @@
   import ButtonBar from "./components/ButtonBar.svelte";
   import Textarea from "./components/Textarea.svelte";
   import CanvasArea from "./components/CanvasArea.svelte";
-  import logo from "./assets/logo.png";
+  import InfoBar from "./components/InfoBar.svelte";
 
   let code = "";
 
@@ -30,23 +30,26 @@
 </script>
 
 <main>
-  <Header {logo} />
-  <div class="container">
-    <ResizableContainer>
-      <ButtonBar on:run={sendCode} />
-      <Textarea id="codeTextarea" bind:value={code} />
-    </ResizableContainer>
-    <CanvasArea />
+  <Header />
+  <div class="container-fluid p-0 overflow-hidden d-flex flex-column" style="height: calc(100vh - 80px);">
+    <div class="row flex-grow-1">
+      <div class="d-flex justify-content-center align-items-streach">
+        <ResizableContainer>
+          <ButtonBar on:run={sendCode}/>
+          <Textarea id="codeTextarea" bind:value={code} />
+        </ResizableContainer>
+        <div class="right-container w-100 d-flex flex-column align-items-center justify-content-center">
+          <CanvasArea />
+          <InfoBar />
+        </div>
+      </div>
+    </div>
   </div>
 </main>
-
 <style>
-  .container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    width: 100%;
-    height: calc(100vh - 100px);
-    margin: 0;
+   .right-container {
+    min-width: 550px;
+    flex: 1;
+    overflow: hidden;
   }
 </style>

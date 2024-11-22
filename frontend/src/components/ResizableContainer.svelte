@@ -25,25 +25,23 @@
   });
 </script>
 
-<div bind:this={resizable} class="left-container">
+<div bind:this={resizable} class="left-container d-flex">
   <div bind:this={resizer} class="resizer"></div>
   <slot></slot>
 </div>
 
 <style>
   .left-container {
-    background-color: white;
-    width: 50%;
     min-width: 500px;
     position: relative;
-    display: flex;
+    width: 50%;
     flex-direction: column;
-    border-right: 1px solid #ccc;
+    padding-right: 10px;
   }
   .resizer {
-    width: 6px;
+    width: 10px;
     height: 100%;
-    background: green;
+    background: #153246;
     position: absolute;
     right: 0;
     bottom: 0;
