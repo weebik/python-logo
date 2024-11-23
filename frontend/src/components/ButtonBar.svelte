@@ -1,5 +1,7 @@
 <script lang="js">
   import { createEventDispatcher } from "svelte";
+  import bootstrap from "bootstrap/dist/js/bootstrap.bundle.min.js";
+
   const dispatch = createEventDispatcher();
 
   function handleRunClick() {
@@ -21,6 +23,13 @@
   function handleExportClick() {
     dispatch("run");
   }
+
+  var tooltipTriggerList = [].slice.call(
+    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  );
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
 </script>
 
 <div>
@@ -29,25 +38,61 @@
     style="background-image: url('/buttonBar.svg'); height: 60px; z-index: 1;"
   >
     <div class="d-flex space-around p-0 gap-2">
-      <button class="p-0 m-0" on:click={handleRunClick}>
+      <button
+        class="p-0 m-0"
+        on:click={handleRunClick}
+        data-bs-toggle="tooltip"
+        data-bs-placement="bottom"
+        title="Run code"
+      >
         <img src="/play.svg" alt="Run" />
       </button>
       <button class="p-0 m-0">
-        <img src="/runCommand.svg" alt="Run command" />
+        <img
+          src="/runCommand.svg"
+          alt="Run command"
+          data-bs-toggle="tooltip"
+          data-bs-placement="bottom"
+          title="Run command"
+        />
       </button>
       <button class="p-0 m-0">
-        <img src="/pause.svg" alt="Pause" />
+        <img
+          src="/pause.svg"
+          alt="Pause"
+          data-bs-toggle="tooltip"
+          data-bs-placement="bottom"
+          title="Pause"
+        />
       </button>
       <button class="p-0 m-0">
-        <img src="/stop.svg" alt="Stop" />
+        <img
+          src="/stop.svg"
+          alt="Stop"
+          data-bs-toggle="tooltip"
+          data-bs-placement="bottom"
+          title="Stop"
+        />
       </button>
     </div>
     <div class="d-flex p-0 gap-2">
       <button class="p-0 m-0">
-        <img src="/importCode.svg" alt="Import" />
+        <img
+          src="/importCode.svg"
+          alt="Import"
+          data-bs-toggle="tooltip"
+          data-bs-placement="bottom"
+          title="Import code"
+        />
       </button>
       <button class="p-0 m-0">
-        <img src="/exportCode.svg" alt="Export" />
+        <img
+          src="/exportCode.svg"
+          alt="Export"
+          data-bs-toggle="tooltip"
+          data-bs-placement="bottom"
+          title="Export code"
+        />
       </button>
     </div>
   </div>

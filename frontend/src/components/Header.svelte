@@ -1,4 +1,12 @@
 <script lang="js">
+  import Secret from "./Secret.svelte";
+  let showSecretModal = false;
+  function openSecretModal() {
+    showSecretModal = true;
+  }
+  function closeSecretModal() {
+    showSecretModal = false;
+  }
 </script>
 
 <header
@@ -16,4 +24,22 @@
     style="width: 60px;height: 60px;"
   />
   <h1 style="font-weight: bold;margin: 5px;">Logo Playground</h1>
+  <button class="secret" on:click={openSecretModal}>W</button>
 </header>
+{#if showSecretModal}
+  <Secret on:close={closeSecretModal} close={closeSecretModal} />
+{/if}
+
+<style>
+  .secret {
+    cursor: default;
+    border: none;
+    position: absolute;
+    left: 0;
+    width: 10px;
+    color: transparent;
+    background-color: transparent;
+    right: 0;
+    z-index: 11;
+  }
+</style>

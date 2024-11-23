@@ -38,7 +38,7 @@
           <ButtonBar on:run={sendCode}/>
           <Textarea id="codeTextarea" bind:value={code} />
         </ResizableContainer>
-        <div class="right-container w-100 d-flex flex-column align-items-center justify-content-center">
+        <div class="right-container w-100 d-flex flex-column align-items-center justify-content-center overflow-hidden">
           <CanvasArea />
           <InfoBar />
         </div>
@@ -50,6 +50,5 @@
    .right-container {
     min-width: 550px;
     flex: 1;
-    overflow: hidden;
   }
 </style>

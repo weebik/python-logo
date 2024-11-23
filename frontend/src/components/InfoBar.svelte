@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from "svelte";
   import LicenseModal from "./LicenseModal.svelte";
   import ContactModal from "./ContactModal.svelte";
 
