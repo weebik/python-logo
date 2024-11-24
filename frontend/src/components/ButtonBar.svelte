@@ -1,6 +1,11 @@
 <script>
   import { code } from "./Textarea.svelte";
   import { emit } from "./Socket.svelte";
+  import { resetTurtle } from "./Turtle.svelte";
+
+  function handleReset() {
+    resetTurtle();
+  }
 
   function handleRun() {
     emit("run", code);
@@ -19,7 +24,7 @@
       <button class="p-0 m-0" title="Pause">
         <img src="/pause.svg" alt="Pause" />
       </button>
-      <button class="p-0 m-0" title="Stop">
+      <button class="p-0 m-0" title="Stop" onclick={handleReset}>
         <img src="/stop.svg" alt="Stop" />
       </button>
     </div>
