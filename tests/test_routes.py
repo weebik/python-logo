@@ -17,7 +17,7 @@ def client():
 
 
 def test_serve(client):
-    if not (Path(__name__).parent.parent / "dist").exists():
+    if not (Path(__name__).resolve().parent.parent / "dist").exists():
         raise FileNotFoundError(FRONTEND_NOT_BUILT_MESSAGE)
     response = client.get("/")
     assert response.status_code == STATUS_CODE_OK

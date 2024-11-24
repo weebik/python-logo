@@ -1,7 +1,16 @@
+<script>
+  import { code } from "./Textarea.svelte";
+  import { emit } from "./Socket.svelte";
+
+  function handleRun() {
+    emit("run", code);
+  }
+</script>
+
 <div>
   <div class="button-bar d-flex align-items-center justify-content-around">
     <div class="d-flex space-around p-0 gap-2">
-      <button class="p-0 m-0" title="Run code">
+      <button class="p-0 m-0" title="Run code" onclick={handleRun}>
         <img src="/run.svg" alt="Run" />
       </button>
       <button class="p-0 m-0" title="Run command">

@@ -1,17 +1,22 @@
-<script>
-  import { onMount } from "svelte";
-
-  onMount(() => {
-    const script = document.createElement("script");
-    script.src = "/lib/turtle.js";
-    script.type = "text/javascript";
-    script.async = true;
-
-    script.onload = () => {
-      console.log("TurtleJS loaded successfully.");
-    };
-    document.head.appendChild(script);
-  });
+<script module>
+  export function executeCommand(command) {
+    switch (command.name) {
+      case "forward":
+        forward(command.value);
+      case "backward":
+        left(180);
+        forward(command.value);
+        left(180);
+      case "left":
+        left(command.value);
+      case "right":
+        right(command.value);
+      case "penup":
+        penup();
+      case "pendown":
+        pendown();
+    }
+  }
 </script>
 
 <div
@@ -20,6 +25,7 @@
   <canvas id="turtlecanvas" width="600" height="600"></canvas>
   <canvas id="imagecanvas" width="600" height="600" style="display: none;"
   ></canvas>
+  <script src="/lib/turtle.js" type="text/javascript"></script>
 </div>
 
 <style>

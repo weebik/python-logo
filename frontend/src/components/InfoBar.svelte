@@ -10,7 +10,7 @@
     <button
       class="p-0 m-0 text-nowrap"
       title="License"
-      on:click={() => (showLicenseModal = true)}
+      onclick={() => (showLicenseModal = true)}
     >
       <img class="pe-1" src="/license.svg" alt="License" />
       License
@@ -18,7 +18,7 @@
     <button
       class="p-0 m-0 text-nowrap"
       title="Contact"
-      on:click={() => (showContactModal = true)}
+      onclick={() => (showContactModal = true)}
     >
       <img class="pe-1" src="/contact.svg" alt="Contact" />
       Contact

@@ -17,10 +17,10 @@ class LogoInterpreter:
 
     def run(self, tree: lark.Tree) -> dict:
         """Executes the parsed tree and returns a list of commands as dictionaries."""
-        self.commands = self._commands_generator(tree)
+        self.commands = self.generator(tree)
         return self._as_list()
 
-    def _commands_generator(self, tree: lark.Tree) -> Generator[dict, None, None]:
+    def generator(self, tree: lark.Tree) -> Generator[dict, None, None]:
         """Generates commands for the turtle from the tree returned by parser."""
         for command in tree.children:
             c = command.children[0]
@@ -28,15 +28,13 @@ class LogoInterpreter:
                 case "repeat":
                     repeat_count = int(str(command.children[1].children[0]))
                     for _ in range(repeat_count):
-                        yield from self._commands_generator(
+                        yield from self.generator(
                             lark.Tree("repeat", command.children[2:])
                         )
                 case "if":
                     condition = str(command.children[1].data)
                     if condition == "true":
-                        yield from self._commands_generator(
-                            lark.Tree("if", command.children[2:])
-                        )
+                        yield from self.generator(lark.Tree("if", command.children[2:]))
                 case "forward" | "backward" | "left" | "right":
                     yield {
                         "name": str(c.data),

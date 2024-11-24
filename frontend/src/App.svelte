@@ -3,8 +3,9 @@
   import Header from "./components/Header.svelte";
   import ButtonBar from "./components/ButtonBar.svelte";
   import Textarea from "./components/Textarea.svelte";
-  import CanvasArea from "./components/CanvasArea.svelte";
+  import Turtle from "./components/Turtle.svelte";
   import InfoBar from "./components/InfoBar.svelte";
+  import Socket from "./components/Socket.svelte";
 </script>
 
 <main>
@@ -17,17 +18,18 @@
       <div class="d-flex justify-content-center align-items-streach">
         <ResizableContainer>
           <ButtonBar />
-          <Textarea id="codeTextarea" />
+          <Textarea />
         </ResizableContainer>
         <div
           class="right-container w-100 d-flex flex-column align-items-center justify-content-center overflow-hidden"
         >
-          <CanvasArea />
+          <Turtle />
           <InfoBar />
         </div>
       </div>
     </div>
   </div>
+  <Socket />
 </main>
 
 <style>

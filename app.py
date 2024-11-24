@@ -1,10 +1,10 @@
 import subprocess
 from pathlib import Path
 
-from python_logo import create_app
+from python_logo import create_app, socketio
 from python_logo.exceptions import NpmExecutableError
 
-frontend_path = Path(__name__).parent / "frontend"
+frontend_path = Path(__name__).resolve().parent / "frontend"
 frontend_files_list = [
     p
     for p in frontend_path.glob("**/*")
@@ -23,4 +23,4 @@ if __name__ == "__main__":
         )
     except subprocess.CalledProcessError as err:
         raise NpmExecutableError from err
-    app.run(debug=True, extra_files=frontend_files_list)
+    socketio.run(app, debug=True, extra_files=frontend_files_list)

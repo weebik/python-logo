@@ -33,5 +33,9 @@
         }
       }
     ]
+  },
+  "dependencies": {
+    "better-turtle": "^1.5.2",
+    "socket.io-client": "^4.8.1"
   }
 }
