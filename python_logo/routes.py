@@ -1,5 +1,10 @@
+from pathlib import Path
+
 from flask import Blueprint, Response, send_from_directory
 
+from .exceptions import FrontendNotBuiltError
+
+_DIST_FRONTEND_DIR = Path(__file__).parent.parent / "dist"
 main = Blueprint("main", __name__)
 
 
@@ -14,4 +19,6 @@ def serve(path: str) -> Response:
     Returns:
         Response: The response containing the file.
     """
+    if not _DIST_FRONTEND_DIR.exists():
+        raise FrontendNotBuiltError
     return send_from_directory("../dist", path)
