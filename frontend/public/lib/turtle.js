@@ -448,6 +448,8 @@
     draw();
   }
 
+  window.reset = reset;
+
   function insideCanvas(x, y, minX, maxX, minY, maxY) {
     return x >= minX && x <= maxX && y >= minY && y <= maxY;
   }
