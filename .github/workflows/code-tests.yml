@@ -32,6 +32,7 @@ jobs:
         uses: creyD/prettier_action@v4.3
         with:
           prettier_plugins: "prettier-plugin-svelte"
+          prettier_options: "--check frontend"
           dry: True
       - name: Run pytest
         run: poetry run pytest -v
