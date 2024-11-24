@@ -38,3 +38,21 @@ class ParserUnexpectedTokenError(Exception):
         """
         self.message = message
         super().__init__(self.message)
+
+
+class NpmExecutableError(Exception):
+    """Raised when the npm executable is not found."""
+
+    default_message = (
+        "npm executable error. "
+        "Please make sure npm (>=18) is installed and in your PATH."
+    )
+
+    def __init__(self, message: str = default_message) -> None:
+        """Initializes the error.
+
+        Args:
+            message (str): The error message.
+        """
+        self.message = message
+        super().__init__(self.message)

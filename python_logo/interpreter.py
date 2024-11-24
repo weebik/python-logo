@@ -10,6 +10,7 @@ class LogoInterpreter:
         commands (Generator | None): A generator that yields commands
             parsed from the Logo tree structure.
     """
+
     def __init__(self) -> None:
         """Initializes the LogoInterpreter instance."""
         self.commands = None
@@ -27,17 +28,19 @@ class LogoInterpreter:
                 case "repeat":
                     repeat_count = int(str(command.children[1].children[0]))
                     for _ in range(repeat_count):
-                        yield from self._commands_generator(lark.Tree("repeat",
-                                                                      command.children[2:]))
+                        yield from self._commands_generator(
+                            lark.Tree("repeat", command.children[2:])
+                        )
                 case "if":
                     condition = str(command.children[1].data)
                     if condition == "true":
-                        yield from self._commands_generator(lark.Tree("if",
-                                                                      command.children[2:]))
+                        yield from self._commands_generator(
+                            lark.Tree("if", command.children[2:])
+                        )
                 case "forward" | "backward" | "left" | "right":
                     yield {
                         "name": str(c.data),
-                        "value": int(str(command.children[1].children[0]))
+                        "value": int(str(command.children[1].children[0])),
                     }
                 case _:
                     yield {"name": str(c.data)}

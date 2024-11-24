@@ -36,6 +36,8 @@ ignore = [
   "D203", # 1 blank line required before class docstring
   "D205", # 1 blank line required between summary line and description
   "D212", # Multi-line docstring summary should start at the second line
+  "S603", # Subprocess call: check for execution of untrusted input
+  "S607", # Starting a process with a partial executable path
   "COM812", # (formatter) Missing trailing comma in a tuple
   "ISC001", # (formatter) Implicitly concatenated string on a single line
   "T201" # TEMPORARY: `print` found

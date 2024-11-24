@@ -1,7 +1,7 @@
 <script lang="js">
-  import { onMount } from "svelte";
+  let { children } = $props();
+
   let resizable;
-  let resizer;
 
   function initResize() {
     window.addEventListener("mousemove", startResizing);
@@ -16,18 +16,16 @@
     window.removeEventListener("mousemove", startResizing);
     window.removeEventListener("mouseup", stopResizing);
   }
-
-  onMount(() => {
-    resizer.addEventListener("mousedown", initResize);
-    return () => {
-      resizer.removeEventListener("mousedown", initResize);
-    };
-  });
 </script>
 
 <div bind:this={resizable} class="left-container d-flex">
-  <div bind:this={resizer} class="resizer"></div>
-  <slot></slot>
+  <div
+    role="button"
+    tabindex="0"
+    onmousedown={initResize}
+    class="resizer"
+  ></div>
+  {@render children()}
 </div>
 
 <style>

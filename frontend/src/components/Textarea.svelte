@@ -5,7 +5,13 @@
 </script>
 
 <div class="m-5 h-100">
-  <textarea class="form-control h-100 shadow-none p-4" style="color: #cae5be; background-color: #153246;" {id} {placeholder} bind:value></textarea>
+  <textarea
+    class="form-control h-100 shadow-none p-4"
+    style="color: #cae5be; background-color: #153246;"
+    {id}
+    {placeholder}
+    bind:value
+  ></textarea>
 </div>
 
 <style>

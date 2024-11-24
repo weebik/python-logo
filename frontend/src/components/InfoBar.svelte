@@ -1,40 +1,26 @@
 <script>
-  import LicenseModal from "./LicenseModal.svelte";
-  import ContactModal from "./ContactModal.svelte";
+  import Modal from "./Modal.svelte";
 
   let showLicenseModal = false;
   let showContactModal = false;
-
-  function openLicenseModal() {
-    showLicenseModal = true;
-  }
-
-  function openContactModal() {
-    showContactModal = true;
-  }
-
-  function closeModal() {
-    showLicenseModal = false;
-    showContactModal = false;
-  }
 </script>
 
-<div
-  class="d-flex align-items-center justify-content-end w-100"
-  style="background-image: url('/infoBar.svg'); height: 60px;"
->
+<div class="info-bar d-flex align-items-center justify-content-end w-100">
   <div class="d-flex gap-4 p-0 me-5">
-    <button class="p-0 m-0 text-nowrap" on:click={openLicenseModal}>
+    <button
+      class="p-0 m-0 text-nowrap"
+      title="License"
+      on:click={() => (showLicenseModal = true)}
+    >
       <img class="pe-1" src="/license.svg" alt="License" />
       License
     </button>
-    <button class="p-0 m-0 text-nowrap" on:click={openContactModal}>
-      <img
-        class="pe-1"
-        style="background-color: transparent;"
-        src="/contact.svg"
-        alt="Contact"
-      />
+    <button
+      class="p-0 m-0 text-nowrap"
+      title="Contact"
+      on:click={() => (showContactModal = true)}
+    >
+      <img class="pe-1" src="/contact.svg" alt="Contact" />
       Contact
     </button>
     <a
@@ -42,22 +28,38 @@
       target="_blank"
       rel="noopener noreferrer"
     >
-      <button class="p-0 m-0 text-nowrap">
-        <img class="pe-1" src="/github.svg" alt="Github" />
+      <button class="p-0 m-0 text-nowrap" title="Visit our GitHub">
+        <img class="pe-1" src="/github.svg" alt="GitHub" />
         Visit our GitHub
       </button>
     </a>
   </div>
 </div>
+
 {#if showLicenseModal}
-  <LicenseModal on:close={closeModal} close={closeModal} />
+  <Modal title="License" closeEvent={() => (showLicenseModal = false)}>
+    This software is licensed under the MIT license.
+  </Modal>
 {/if}
 
 {#if showContactModal}
-  <ContactModal on:close={closeModal} close={closeModal}/>
+  <Modal title="Contact us" closeEvent={() => (showContactModal = false)}>
+    If you have any questions or suggestions, feel free to contact us:
+    <ul>
+      <li>Krystian Ćwikliński: krystian.samaa@gmail.com</li>
+      <li>Mikołaj Kalitka: mkalitka@gmail.com</li>
+      <li>Yaryna Rachkevych: yaryna@gmail.com</li>
+      <li>Magda Tytoń: magda@gmail.com</li>
+    </ul>
+  </Modal>
 {/if}
 
 <style>
+  .info-bar {
+    background-image: url("/info-bar.svg");
+    height: 60px;
+    z-index: 1;
+  }
   button {
     user-select: none;
     border: none;

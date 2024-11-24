@@ -35,6 +35,7 @@ class LogoParser:
     Attributes:
         None
     """
+
     def run(self, code: str) -> lark.Tree:
         """Parses the given Logo code and returns its JSON representation.
 

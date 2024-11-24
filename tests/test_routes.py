@@ -1,8 +1,11 @@
+from pathlib import Path
+
 import pytest
 
 from python_logo import create_app
 
 STATUS_CODE_OK = 200
+FRONTEND_NOT_BUILT_MESSAGE = "dist folder not found. Run `npm run build` first."
 
 
 @pytest.fixture
@@ -13,13 +16,9 @@ def client():
         yield client
 
 
-def test_index(client):
+def test_serve(client):
+    if not (Path(__name__).parent.parent / "dist").exists():
+        raise FileNotFoundError(FRONTEND_NOT_BUILT_MESSAGE)
     response = client.get("/")
     assert response.status_code == STATUS_CODE_OK
     assert b"Logo Playground" in response.data
-
-
-def test_index_post(client):
-    data = {"code": ""}
-    response = client.post("/", data=data)
-    assert response.status_code == STATUS_CODE_OK

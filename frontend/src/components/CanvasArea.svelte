@@ -8,7 +8,7 @@
     script.async = true;
 
     script.onload = () => {
-      console.log("TurtleAPI loaded successfully.");
+      console.log("TurtleJS loaded successfully.");
     };
     document.head.appendChild(script);
   });
