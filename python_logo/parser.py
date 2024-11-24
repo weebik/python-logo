@@ -29,31 +29,25 @@ number: SIGNED_INT
 """
 
 
-class LogoParser:
-    """Class to parse Logo codo into a structured tree using the Lark library.
+def parse_logo(code: str) -> lark.Tree:
+    """Parses the given Logo code and returns its JSON representation.
 
-    Attributes:
-        None
+    Args:
+        code (str): The Logo code to be parsed.
+
+    Returns:
+        lark.Tree: The tokenized representation of the code.
     """
-    def run(self, code: str) -> lark.Tree:
-        """Parses the given Logo code and returns its JSON representation.
+    code = code.strip()
+    if code == "":
+        return lark.Tree("start", [])
 
-        Args:
-            code (str): The Logo code to be parsed.
+    parser = Lark(logo_grammar, parser="lalr")
 
-        Returns:
-            dict: The tokenized representation of the code.
-        """
-        code = code.strip()
-        if code == "":
-            return lark.Tree("start", [])
-
-        parser = Lark(logo_grammar, parser="lalr")
-
-        try:
-            print(parser.parse(code).pretty())
-            return parser.parse(code)
-        except lark.exceptions.UnexpectedCharacters as err:
-            raise ParserInvalidCommandError from err
-        except lark.exceptions.UnexpectedToken as err:
-            raise ParserUnexpectedTokenError from err
+    try:
+        print(parser.parse(code).pretty())
+        return parser.parse(code)
+    except lark.exceptions.UnexpectedCharacters as err:
+        raise ParserInvalidCommandError from err
+    except lark.exceptions.UnexpectedToken as err:
+        raise ParserUnexpectedTokenError from err

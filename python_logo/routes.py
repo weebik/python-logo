@@ -1,32 +1,17 @@
-from flask import Blueprint, render_template, request
-
-from .utils import parse_logo_http_response
+from flask import Blueprint, Response, send_from_directory
 
 main = Blueprint("main", __name__)
 
 
-@main.route("/")
-def index() -> tuple[str, int]:
-    """Renders the index page.
+@main.route("/", defaults={"path": "index.html"})
+@main.route("/<path:path>")
+def serve(path: str) -> Response:
+    """Serves the requested file from the dist folder.
+
+    Args:
+        path (str): The path to the served file.
 
     Returns:
-        tuple[str, int]: The rendered index page with status code.
+        Response: The response containing the file.
     """
-    return render_template("index.html"), 200
-
-
-@main.route("/", methods=["POST"])
-def index_post() -> tuple[dict, int]:
-    """Handles form submission and prints the user's code.
-
-    Returns:
-        tuple[dict, int]: A response with status code.
-    """
-    user_code = request.form.get("code")
-    if user_code is None:
-        return {"error": "No code provided."}, 400
-
-    user_code = user_code.strip()
-    response = parse_logo_http_response(user_code)
-    print(response[0])
-    return response
+    return send_from_directory("../dist", path)

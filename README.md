@@ -21,7 +21,7 @@
 <h3 align="center">python-logo</h3>
 
   <p align="center">
-    Python Logo interpreter with web-based frontend.
+    Python Logo interpreter with frontend made in Svelte.
     <br />
     <br />
     <a href="https://github.com/YarynaRachkevych1/python-logo">View Demo</a>
@@ -64,7 +64,7 @@
 
 [![python-logo screenshot][product-screenshot]][product-screenshot]
 
-This project is created for the *Innovative Projects by Nokia* subject on [UWR][uwr-url] studies. It features a [Logo][logo-url] language interpreter, a [Flask][flask-url] backend and a web frontend.
+This project is created for the *Innovative Projects by Nokia* subject on [UWR][uwr-url] studies. It features a [Logo][logo-url] language interpreter, a [Flask][flask-url] backend and a [Svelte][svelte-url] frontend.
 
 <a id="features"></a>
 ### Features
@@ -85,6 +85,7 @@ To get a local copy up and running, follow these simple steps.
 Make sure you have the following installed:
 - **Python**: Version 3.10 or higher
 - [**Poetry**][poetry-url] (optional): For dependency management
+- Node.js (optional, for frontend): Version 18 or higher (make sure `npm` is in your PATH)
 
 ### Installation
 
@@ -171,6 +172,7 @@ Before commiting, please ensure you've installed pre-commit hooks:
 
 ```bash
 pre-commit install
+pre-commit install --hook-type commit-msg
 ```
 
 ### Top contributors:
@@ -204,8 +206,9 @@ Distributed under the MIT License. See [LICENSE][license-url] for more informati
 [issues-url]: https://github.com/YarynaRachkevych1/python-logo/issues
 [license-shield]: https://img.shields.io/github/license/YarynaRachkevych1/python-logo.svg?style=for-the-badge
 [license-url]: https://github.com/YarynaRachkevych1/python-logo/blob/main/LICENSE
-[product-screenshot]: https://github.com/YarynaRachkevych1/python-logo/raw/main/images/screenshot.png
+[product-screenshot]: images/screenshot.png
 [logo-url]: https://en.wikipedia.org/wiki/Logo_(programming_language)
 [uwr-url]: https://rekrutacja.uni.wroc.pl/kierunek/informatyka-i-stopnia-stacjonarne-licencjackie-i-inzynierskie
 [flask-url]: https://flask.palletsprojects.com/en/stable
+[svelte-url]: https://svelte.dev
 [poetry-url]: https://python-poetry.org

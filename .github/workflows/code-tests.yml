@@ -12,6 +12,16 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install frontend
+        run: npm install --prefix frontend
+      - name: Build frontend
+        run: npm run build --prefix frontend
+      - name: List files
+        run: ls . && ls dist
       - name: Install poetry
         uses: abatilo/actions-poetry@v2
       - name: Install the project
@@ -21,6 +31,8 @@ jobs:
       - name: Check prettier
         uses: creyD/prettier_action@v4.3
         with:
+          prettier_plugins: "prettier-plugin-svelte"
+          prettier_options: "--check frontend"
           dry: True
       - name: Run pytest
         run: poetry run pytest -v
