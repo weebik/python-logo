@@ -35,13 +35,16 @@
   }
 </script>
 
+<svelte:head>
+  <script src="/lib/turtle.js" type="text/javascript"></script>
+</svelte:head>
+
 <div
   class="right-container d-flex flex-col align-items-center justify-content-center p-5"
 >
   <canvas id="turtlecanvas" width="600" height="600"></canvas>
   <canvas id="imagecanvas" width="600" height="600" style="display: none;"
   ></canvas>
-  <script src="/lib/turtle.js" type="text/javascript"></script>
 </div>
 
 <style>
