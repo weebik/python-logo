@@ -1,14 +1,14 @@
 <script>
+  import Icon from "./Icon.svelte";
   import { code } from "./Textarea.svelte";
-  import { emit } from "./Socket.svelte";
-  import { resetTurtle } from "./Turtle.svelte";
+  import { runTurtle, resetTurtle } from "./Turtle.svelte";
+
+  function handleRun() {
+    runTurtle(code);
+  }
 
   function handleReset() {
     resetTurtle();
-  }
-
-  function handleRun() {
-    emit("run", code);
   }
 </script>
 
@@ -16,24 +16,24 @@
   <div class="button-bar d-flex align-items-center justify-content-around">
     <div class="d-flex space-around p-0 gap-2">
       <button class="p-0 m-0" title="Run code" onclick={handleRun}>
-        <img src="/run.svg" alt="Run" />
+        <Icon name="run" />
       </button>
       <button class="p-0 m-0" title="Run command">
-        <img src="/run-debug.svg" alt="Run debug" />
+        <Icon name="runDebug" />
       </button>
       <button class="p-0 m-0" title="Pause">
-        <img src="/pause.svg" alt="Pause" />
+        <Icon name="pause" />
       </button>
-      <button class="p-0 m-0" title="Stop" onclick={handleReset}>
-        <img src="/stop.svg" alt="Stop" />
+      <button class="p-0 m-0" title="Reset" onclick={handleReset}>
+        <Icon name="reset" />
       </button>
     </div>
     <div class="d-flex p-0 gap-2">
       <button class="p-0 m-0" title="Import code">
-        <img src="/import-code.svg" alt="Import" />
+        <Icon name="importCode" />
       </button>
       <button class="p-0 m-0" title="Export code">
-        <img src="/export-code.svg" alt="Export" />
+        <Icon name="exportCode" />
       </button>
     </div>
   </div>
@@ -41,7 +41,7 @@
 
 <style>
   .button-bar {
-    background-image: url("/button-bar.svg");
+    background-image: url("/src/assets/button-bar.svg");
     height: 60px;
     z-index: 1;
   }

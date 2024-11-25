@@ -1,11 +1,11 @@
 <script module>
   import { io } from "socket.io-client";
-  import { executeCommand } from "./Turtle.svelte";
+  import { executeTurtleCommand } from "./Turtle.svelte";
 
   const socket = io();
 
-  export function emit(event, data) {
-    socket.emit(event, data);
+  export function emitRun(code) {
+    socket.emit("run", code);
   }
 
   socket.on("connect", () => {
@@ -13,7 +13,7 @@
   });
 
   socket.on("execute", (command) => {
-    console.log("Executing command:", command);
-    executeCommand(command);
+    console.log("Received execute:", command);
+    executeTurtleCommand(command);
   });
 </script>

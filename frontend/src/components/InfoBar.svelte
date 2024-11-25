@@ -1,4 +1,5 @@
 <script>
+  import Icon from "./Icon.svelte";
   import Modal from "./Modal.svelte";
 
   let showLicenseModal = false;
@@ -12,7 +13,7 @@
       title="License"
       onclick={() => (showLicenseModal = true)}
     >
-      <img class="pe-1" src="/license.svg" alt="License" />
+      <Icon class="pe-1" name="license" />
       License
     </button>
     <button
@@ -20,7 +21,7 @@
       title="Contact"
       onclick={() => (showContactModal = true)}
     >
-      <img class="pe-1" src="/contact.svg" alt="Contact" />
+      <Icon class="pe-1" name="contact" />
       Contact
     </button>
     <a
@@ -29,7 +30,7 @@
       rel="noopener noreferrer"
     >
       <button class="p-0 m-0 text-nowrap" title="Visit our GitHub">
-        <img class="pe-1" src="/github.svg" alt="GitHub" />
+        <Icon class="pe-1" name="github" />
         Visit our GitHub
       </button>
     </a>
@@ -56,7 +57,7 @@
 
 <style>
   .info-bar {
-    background-image: url("/info-bar.svg");
+    background-image: url("/src/assets/info-bar.svg");
     height: 60px;
     z-index: 1;
   }
