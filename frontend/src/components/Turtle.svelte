@@ -1,8 +1,15 @@
 <script module>
+  import { emitRun } from "./Socket.svelte";
+
+  export function runTurtle(code) {
+    emitRun(code);
+  }
+
   export function resetTurtle() {
     reset();
   }
-  export function executeCommand(command) {
+
+  export function executeTurtleCommand(command) {
     switch (command.name) {
       case "forward":
         forward(command.value);
