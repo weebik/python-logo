@@ -1,14 +1,14 @@
 import lark.exceptions
-from lark import Lark
+from lark import Lark, Transformer
 
 from .exceptions import ParserInvalidCommandError, ParserUnexpectedTokenError
 
-logo_grammar = """
+_LOGO_GRAMMAR = """
 start: command+
 command: ((forward | backward | left | right) number) \
          | (showturtle | hideturtle | penup | pendown) \
          | ((repeat) number "[" command+ "]") \
-         | ((if) (true | false) "[" command+ "]")
+         | ((if_command) (true | false) "[" command+ "]")
 forward: "forward" | "fd"
 backward: "backward" | "bk"
 left: "left" | "lt"
@@ -18,7 +18,7 @@ hideturtle: "hideturtle" | "ht"
 penup: "penup" | "pu"
 pendown: "pendown" | "pd"
 repeat: "repeat"
-if: "if"
+if_command: "if"
 true: "true" | "True"
 false: "false" | "False"
 number: SIGNED_INT
@@ -29,23 +29,83 @@ number: SIGNED_INT
 """
 
 
-def parse_logo(code: str) -> lark.Tree:
+class _LogoJsonTransformer(Transformer):
+    """Transforms Logo language code into JSON format."""
+
+    def start(self, items: list) -> dict:
+        return {"commands": items}
+
+    def command(self, items: list) -> dict:
+        name = items[0]
+        if name == "repeat":
+            value = items[1]
+            commands = items[2:]
+            return {"name": name, "value": value, "commands": commands}
+        if name == "if":
+            condition = items[1]
+            commands = items[2:]
+            return {"name": name, "condition": condition, "commands": commands}
+        if name in ["forward", "backward", "left", "right"]:
+            value = items[1]
+            return {"name": name, "value": value}
+        return {"name": name}
+
+    def forward(self, items: list) -> str:  # noqa: ARG002
+        return "forward"
+
+    def backward(self, items: list) -> str:  # noqa: ARG002
+        return "backward"
+
+    def left(self, items: list) -> str:  # noqa: ARG002
+        return "left"
+
+    def right(self, items: list) -> str:  # noqa: ARG002
+        return "right"
+
+    def showturtle(self, items: list) -> str:  # noqa: ARG002
+        return "showturtle"
+
+    def hideturtle(self, items: list) -> str:  # noqa: ARG002
+        return "hideturtle"
+
+    def penup(self, items: list) -> str:  # noqa: ARG002
+        return "penup"
+
+    def pendown(self, items: list) -> str:  # noqa: ARG002
+        return "pendown"
+
+    def repeat(self, items: list) -> str:  # noqa: ARG002
+        return "repeat"
+
+    def if_command(self, items: list) -> str:  # noqa: ARG002
+        return "if"
+
+    def true(self, items: list) -> str:  # noqa: ARG002
+        return "true"
+
+    def false(self, items: list) -> str:  # noqa: ARG002
+        return "false"
+
+    def number(self, items: list) -> int:
+        return int(items[0])
+
+
+def parse(code: str) -> dict[str, list[dict]]:
     """Parses the given Logo code and returns its JSON representation.
 
     Args:
         code (str): The Logo code to be parsed.
 
     Returns:
-        lark.Tree: The tokenized representation of the code.
+        dict[str, list[dict]: The tokenized representation of the code.
     """
     code = code.strip()
     if code == "":
-        return lark.Tree("start", [])
+        return {"commands": []}
 
-    parser = Lark(logo_grammar, parser="lalr")
+    parser = Lark(_LOGO_GRAMMAR, parser="lalr", transformer=_LogoJsonTransformer())
 
     try:
-        print(parser.parse(code).pretty())
         return parser.parse(code)
     except lark.exceptions.UnexpectedCharacters as err:
         raise ParserInvalidCommandError from err

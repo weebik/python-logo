@@ -1,7 +1,13 @@
 from flask_socketio import SocketIO
 
-from .interpreter import LogoInterpreter
-from .parser import parse_logo
+from .exceptions import (
+    InterpreterInvalidCommandError,
+    InterpreterInvalidTreeError,
+    ParserInvalidCommandError,
+    ParserUnexpectedTokenError,
+)
+from .interpreter import Interpreter
+from .parser import parse
 
 
 def register_events(socketio: SocketIO) -> None:
@@ -11,11 +17,6 @@ def register_events(socketio: SocketIO) -> None:
         socketio (SocketIO): The socketio object.
     """
 
-    @socketio.on("connect")
-    def connect() -> None:
-        """Event handler for when a client connects to the server."""
-        print("Client connected")
-
     @socketio.on("run")
     def run(code: str) -> None:
         """Event handler for when a client sends a run event.
@@ -23,7 +24,21 @@ def register_events(socketio: SocketIO) -> None:
         Args:
             code (str): The Logo code to run.
         """
-        logo_tree = parse_logo(code)
-        interpreter = LogoInterpreter()
-        for command in interpreter.generator(logo_tree):
-            socketio.emit("execute", command)
+        try:
+            tree = parse(code)
+        except (ParserInvalidCommandError, ParserUnexpectedTokenError) as e:
+            socketio.emit("error", str(e))
+            return
+
+        try:
+            interpreter = Interpreter(tree)
+        except InterpreterInvalidTreeError as e:
+            socketio.emit("error", str(e))
+            return
+
+        try:
+            for command in interpreter:
+                socketio.emit("execute", command)
+        except (InterpreterInvalidTreeError, InterpreterInvalidCommandError) as e:
+            socketio.emit("error", str(e))
+            return
