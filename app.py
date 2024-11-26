@@ -10,15 +10,26 @@ _frontend_files_list = [
     for p in _FRONTEND_DIR.glob("**/*")
     if "node_modules" not in str(p) and p.is_file()
 ]
+
 app = create_app()
 
 
 if __name__ == "__main__":
     try:
-        process_install = subprocess.run(
-            ["npm", "install", "--prefix", _FRONTEND_DIR.as_posix()], check=True
+        subprocess.run(
+            ["npm", "list", "--prefix", _FRONTEND_DIR.as_posix()],
+            check=True,
+            capture_output=True,
         )
-        process_build = subprocess.run(
+    except subprocess.CalledProcessError:
+        try:
+            subprocess.run(
+                ["npm", "install", "--prefix", _FRONTEND_DIR.as_posix()], check=True
+            )
+        except subprocess.CalledProcessError as err:
+            raise NpmExecutableError from err
+    try:
+        subprocess.run(
             ["npm", "run", "build", "--prefix", _FRONTEND_DIR.as_posix()], check=True
         )
     except subprocess.CalledProcessError as err:

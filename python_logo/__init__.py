@@ -2,7 +2,11 @@ from flask import Flask
 from flask_socketio import SocketIO
 
 from .events import register_events
+from .interpreter import Interpreter
+from .parser import parse
 from .routes import main
+
+__all__ = ["Interpreter", "parse"]
 
 socketio = SocketIO()
 

@@ -1,53 +1,74 @@
-from collections.abc import Generator
+from collections.abc import Generator, Iterator
 
-import lark.exceptions
+from .exceptions import InterpreterInvalidCommandError, InterpreterInvalidTreeError
 
 
-class LogoInterpreter:
+class Interpreter:
     """Class to interpret parsed Logo programming language commands.
+    Interpreted commands include only commands that affects the turtle directly.
 
-    Attributes:
-        commands (Generator | None): A generator that yields commands
-            parsed from the Logo tree structure.
+    Args:
+        tree (dict): Parsed Logo tree with parse() function.
     """
 
-    def __init__(self) -> None:
-        """Initializes the LogoInterpreter instance."""
-        self.commands = None
-
-    def run(self, tree: lark.Tree) -> dict:
-        """Executes the parsed tree and returns a list of commands as dictionaries."""
-        self.commands = self.generator(tree)
-        return self._as_list()
-
-    def generator(self, tree: lark.Tree) -> Generator[dict, None, None]:
-        """Generates commands for the turtle from the tree returned by parser."""
-        for command in tree.children:
-            c = command.children[0]
-            match c.data:
-                case "repeat":
-                    repeat_count = int(str(command.children[1].children[0]))
-                    for _ in range(repeat_count):
-                        yield from self.generator(
-                            lark.Tree("repeat", command.children[2:])
-                        )
-                case "if":
-                    condition = str(command.children[1].data)
-                    if condition == "true":
-                        yield from self.generator(lark.Tree("if", command.children[2:]))
-                case "forward" | "backward" | "left" | "right":
-                    yield {
-                        "name": str(c.data),
-                        "value": int(str(command.children[1].children[0])),
-                    }
-                case _:
-                    yield {"name": str(c.data)}
-
-    def _as_list(self) -> dict:
-        """Converts generator of commands for the turtle to a list of dicts."""
-        command_list = []
+    def __init__(self, tree: dict) -> None:
+        """Initializes the Interpreter instance."""
         try:
-            while True:
-                command_list.append(next(self.commands))
-        except StopIteration:
-            return {"commands": command_list}
+            self._commands = tree["commands"]
+        except KeyError as err:
+            raise InterpreterInvalidTreeError from err
+        except TypeError as err:
+            raise InterpreterInvalidTreeError from err
+
+    def _interpret(self, commands: list) -> Generator[dict, None, None]:
+        """Generates interpreted commands.
+
+        Args:
+            commands (list): List of parsed commands.
+
+        Returns:
+            Generator[dict, None, None]: Generator of interpreted commands.
+        """
+        try:
+            for command in commands:
+                name = command["name"]
+                match name:
+                    case "repeat":
+                        value = command["value"]
+                        for _ in range(value):
+                            yield from self._interpret(command["commands"])
+                    case "if":
+                        condition = command["condition"]
+                        if condition == "true":
+                            yield from self._interpret(command["commands"])
+                    case (
+                        "forward"
+                        | "backward"
+                        | "left"
+                        | "right"
+                        | "hideturtle"
+                        | "showturtle"
+                        | "penup"
+                        | "pendown"
+                    ):
+                        yield command
+                    case _:
+                        raise InterpreterInvalidCommandError
+        except KeyError as err:
+            raise InterpreterInvalidTreeError from err
+
+    def interpret_all(self) -> dict:
+        """Interprets all parsed commands.
+
+        Returns:
+            dict: All interpreted commands.
+        """
+        return {"commands": list(self)}
+
+    def __iter__(self) -> Iterator[dict]:
+        """Iterates over commands and interprets them.
+
+        Returns:
+            Iterator[dict]: Iterator of interpreted commands.
+        """
+        return self._interpret(self._commands)

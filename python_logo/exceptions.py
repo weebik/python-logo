@@ -1,4 +1,4 @@
-ERROR_SUFFIX = """Please use one of the commands provided below:
+PARSER_ERROR_SUFFIX = """Please use one of the commands provided below:
 
     (forward | fd) <number>
     (backward | bk) <number>
@@ -7,7 +7,10 @@ ERROR_SUFFIX = """Please use one of the commands provided below:
     showturtle | st
     hideturtle | ht
     penup | pu
-    pendown | pd"""
+    pendown | pd
+    repeat <number> [ <command> ... ]
+    if <condition> [ <command> ... ]
+    """
 
 
 class NpmExecutableError(Exception):
@@ -46,7 +49,7 @@ class FrontendNotBuiltError(Exception):
 class ParserInvalidCommandError(Exception):
     """Raised when an invalid command is given to the parser."""
 
-    default_message = f"Invalid command. {ERROR_SUFFIX}"
+    default_message = f"Invalid command. {PARSER_ERROR_SUFFIX}"
 
     def __init__(self, message: str = default_message) -> None:
         """Initializes the error.
@@ -61,7 +64,40 @@ class ParserInvalidCommandError(Exception):
 class ParserUnexpectedTokenError(Exception):
     """Raised when an unexpected token is found in the input."""
 
-    default_message = f"Unexpected token. {ERROR_SUFFIX}"
+    default_message = f"Unexpected token. {PARSER_ERROR_SUFFIX}"
+
+    def __init__(self, message: str = default_message) -> None:
+        """Initializes the error.
+
+        Args:
+            message (str): The error message.
+        """
+        self.message = message
+        super().__init__(self.message)
+
+
+class InterpreterInvalidTreeError(Exception):
+    """Raised when an invalid tree is given to the interpreter."""
+
+    default_message = (
+        "Invalid command tree. "
+        "Make sure you provided a tree parsed with parse() function."
+    )
+
+    def __init__(self, message: str = default_message) -> None:
+        """Initializes the error.
+
+        Args:
+            message (str): The error message.
+        """
+        self.message = message
+        super().__init__(self.message)
+
+
+class InterpreterInvalidCommandError(Exception):
+    """Raised when an invalid command is given to the interpreter."""
+
+    default_message = "Invalid command. Make sure you provided a supported command."
 
     def __init__(self, message: str = default_message) -> None:
         """Initializes the error.
