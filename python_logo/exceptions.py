@@ -13,28 +13,14 @@ PARSER_ERROR_SUFFIX = """Please use one of the commands provided below:
     """
 
 
-class NpmExecutableError(Exception):
-    """Raised when the npm executable is not found."""
-
-    default_message = (
-        "npm executable error. "
-        "Please make sure npm (>=18) is installed and in your PATH."
-    )
-
-    def __init__(self, message: str = default_message) -> None:
-        """Initializes the error.
-
-        Args:
-            message (str): The error message.
-        """
-        self.message = message
-        super().__init__(self.message)
-
-
 class FrontendNotBuiltError(Exception):
     """Raised when the frontend is not built."""
 
-    default_message = "dist folder not found. Run `npm run build` first."
+    default_message = (
+        "dist folder not found."
+        "See https://github.com/YarynaRachkevych1/python-logo/blob/main/frontend/README.md"
+        " for instructions on how to build the frontend."
+    )
 
     def __init__(self, message: str = default_message) -> None:
         """Initializes the error.

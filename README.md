@@ -84,8 +84,8 @@ To get a local copy up and running, follow these simple steps.
 
 Make sure you have the following installed:
 - **Python**: Version 3.10 or higher
+- **Node.js** (optional, for frontend): Version 18 or higher
 - [**Poetry**][poetry-url] (optional): For dependency management
-- Node.js (optional, for frontend): Version 18 or higher (make sure `npm` is in your PATH)
 
 ### Installation
 
