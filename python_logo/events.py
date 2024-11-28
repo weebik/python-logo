@@ -6,8 +6,7 @@ from .exceptions import (
     ParserInvalidCommandError,
     ParserUnexpectedTokenError,
 )
-from .interpreter import Interpreter
-from .parser import parse
+from .utils import run
 
 
 def register_events(socketio: SocketIO) -> None:
@@ -18,27 +17,20 @@ def register_events(socketio: SocketIO) -> None:
     """
 
     @socketio.on("run")
-    def run(code: str) -> None:
+    def on_run(code: str) -> None:
         """Event handler for when a client sends a run event.
 
         Args:
             code (str): The Logo code to run.
         """
         try:
-            tree = parse(code)
-        except (ParserInvalidCommandError, ParserUnexpectedTokenError) as e:
-            socketio.emit("error", str(e))
-            return
-
-        try:
-            interpreter = Interpreter(tree)
-        except InterpreterInvalidTreeError as e:
-            socketio.emit("error", str(e))
-            return
-
-        try:
-            for command in interpreter:
+            logo_runner = run(code)
+            for command in logo_runner:
                 socketio.emit("execute", command)
-        except (InterpreterInvalidTreeError, InterpreterInvalidCommandError) as e:
-            socketio.emit("error", str(e))
-            return
+        except (
+            InterpreterInvalidCommandError,
+            InterpreterInvalidTreeError,
+            ParserInvalidCommandError,
+            ParserUnexpectedTokenError,
+        ) as err:
+            socketio.emit("error", str(err))

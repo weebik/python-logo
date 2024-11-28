@@ -57,14 +57,6 @@ class Interpreter:
         except KeyError as err:
             raise InterpreterInvalidTreeError from err
 
-    def interpret_all(self) -> dict:
-        """Interprets all parsed commands.
-
-        Returns:
-            dict: All interpreted commands.
-        """
-        return {"commands": list(self)}
-
     def __iter__(self) -> Iterator[dict]:
         """Iterates over commands and interprets them.
 

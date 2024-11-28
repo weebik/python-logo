@@ -5,8 +5,9 @@ from .events import register_events
 from .interpreter import Interpreter
 from .parser import parse
 from .routes import main
+from .utils import run
 
-__all__ = ["Interpreter", "parse"]
+__all__ = ["Interpreter", "create_app", "parse", "run"]
 
 socketio = SocketIO()
 

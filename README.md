@@ -51,7 +51,13 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
+    <li>
+      <a href="#usage">Usage</a>
+      <ul>
+        <li><a href="#as-a-python-module">As a Python module</a></li>
+        <li><a href="#as-a-web-application">As a web application</a></li>
+      </ul>
+    </li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
   </ol>
@@ -84,7 +90,7 @@ To get a local copy up and running, follow these simple steps.
 
 Make sure you have the following installed:
 - **Python**: Version 3.10 or higher
-- **Node.js** (optional, for frontend): Version 18 or higher
+- **Node.js** (optional, for web application): Version 18 or higher
 - [**Poetry**][poetry-url] (optional): For dependency management
 
 ### Installation
@@ -110,7 +116,7 @@ You can install the project in two ways: using `pip` or `poetry`.
 3. Install the project with dependencies:
 
    ```sh
-   pip install -e .
+   pip install .
    ```
 
 #### Using Poetry
@@ -135,29 +141,49 @@ You can install the project in two ways: using `pip` or `poetry`.
 <!-- USAGE -->
 ## Usage
 
-To run the application, you can use one of the following methods depending on your installation method.
+You can use the project in two ways: as a Python module or as a web application.
+For more information about the frontend, see the [frontend/README.md][frontend-readme-url] file.
 
-#### Using pip
+### As a Python module
 
-1. Ensure your virtual environment is activated:
+```python
+import python_logo
+
+sample_code = "fd 10 bk 20"
+
+# Generate commands to execute them one by one.
+logo_runner = python_logo.run(sample_code)
+for command in logo_runner:
+    print(command)
+    # {'command': 'forward', 'value': 10}
+    # {'command': 'backward', 'value': 20}
+
+# Or get them all at once.
+logo_runner = python_logo.run(sample_code)
+commands = list(logo_runner)
+print(commands)
+# [{'command': 'forward', 'value': 10}, {'command': 'backward', 'value': 20}]
+```
+
+### As a web application
+
+1. Build the frontend:
 
    ```sh
-   source venv/bin/activate
+   cd frontend
+   npm install
+   npm run build
+   cd ..
    ```
 
 2. Run the application:
 
    ```sh
-   python app.py
+   python app.py  # Using pip
+   poetry run python app.py  # Using Poetry
    ```
 
-#### Using Poetry
 
-1. Run the application within the Poetry environment:
-
-   ```sh
-   poetry run python app.py
-   ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -212,3 +238,4 @@ Distributed under the MIT License. See [LICENSE][license-url] for more informati
 [flask-url]: https://flask.palletsprojects.com/en/stable
 [svelte-url]: https://svelte.dev
 [poetry-url]: https://python-poetry.org
+[frontend-readme-url]: frontend/README.md
