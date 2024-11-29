@@ -183,8 +183,6 @@ print(commands)
    poetry run python app.py  # Using Poetry
    ```
 
-
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
