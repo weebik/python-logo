@@ -33,7 +33,7 @@ class _LogoJsonTransformer(Transformer):
     """Transforms Logo language code into JSON format."""
 
     def start(self, items: list) -> dict:
-        return {"commands": items}
+        return {"tokens": items}
 
     def command(self, items: list) -> dict:
         name = items[0]
@@ -90,14 +90,14 @@ class _LogoJsonTransformer(Transformer):
         return int(items[0])
 
 
-def parse(code: str) -> dict[str, list[dict]]:
+def parse(code: str) -> dict:
     """Parses the given Logo code and returns its JSON representation.
 
     Args:
         code (str): The Logo code to be parsed.
 
     Returns:
-        dict[str, list[dict]: The tokenized representation of the code.
+        dict: Code tree representation in JSON format.
     """
     code = code.strip()
     if code == "":

@@ -9,7 +9,7 @@ def run(code: str) -> Interpreter:
         code (str): Logo code to run.
 
     Returns:
-        Interpreter: Interpreter object with the result of the code.
+        Interpreter: The interpreter class with an iterator to obtain the commands.
     """
     tree = parse(code)
     return Interpreter(tree)
