@@ -101,7 +101,7 @@ def parse(code: str) -> dict:
     """
     code = code.strip()
     if code == "":
-        return {"commands": []}
+        return {"tokens": []}
 
     parser = Lark(_LOGO_GRAMMAR, parser="lalr", transformer=_LogoJsonTransformer())
 
