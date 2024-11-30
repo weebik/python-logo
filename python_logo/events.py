@@ -1,3 +1,4 @@
+from flask import current_app as app
 from flask_socketio import SocketIO
 
 from .exceptions import (
@@ -15,6 +16,16 @@ def register_events(socketio: SocketIO) -> None:
     Args:
         socketio (SocketIO): The socketio object.
     """
+
+    @socketio.on("connect")
+    def on_connect() -> None:
+        """Event handler for when a client connects."""
+        app.logger.info("Client connected")
+
+    @socketio.on("disconnect")
+    def on_disconnect() -> None:
+        """Event handler for when a client disconnects."""
+        app.logger.info("Client disconnected")
 
     @socketio.on("run")
     def on_run(code: str) -> None:
