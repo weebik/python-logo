@@ -44,4 +44,4 @@ def register_events(socketio: SocketIO) -> None:
             ParserInvalidCommandError,
             ParserUnexpectedTokenError,
         ) as err:
-            socketio.emit("error", str(err))
+            socketio.emit("exception", str(err))

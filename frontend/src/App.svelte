@@ -1,12 +1,12 @@
 <script lang="js">
-  import { SvelteToast } from "@zerodevx/svelte-toast";
-  import ResizableContainer from "./components/ResizableContainer.svelte";
-  import Header from "./components/Header.svelte";
   import ButtonBar from "./components/ButtonBar.svelte";
-  import Textarea from "./components/Textarea.svelte";
-  import Turtle from "./components/Turtle.svelte";
+  import Header from "./components/Header.svelte";
   import InfoBar from "./components/InfoBar.svelte";
+  import ResizableContainer from "./components/ResizableContainer.svelte";
   import Socket from "./components/Socket.svelte";
+  import Textarea from "./components/Textarea.svelte";
+  import Toast from "./components/Toast.svelte";
+  import Turtle from "./components/Turtle.svelte";
 </script>
 
 <main>
@@ -30,9 +30,7 @@
       </div>
     </div>
   </div>
-  <div class="toast-overrides">
-    <SvelteToast />
-  </div>
+  <Toast />
   <Socket />
 </main>
 
@@ -43,14 +41,5 @@
   .right-container {
     min-width: 550px;
     flex: 1;
-  }
-  .toast-overrides {
-    --toastWidth: 24rem;
-    --toastBackground: #ff3931;
-    --toastColor: white;
-    --toastBorderRadius: 1rem;
-    --toastBarBackground: darkRed;
-    --toastPadding: 0.75rem;
-    font-family: Ubuntu, sans-serif;
   }
 </style>

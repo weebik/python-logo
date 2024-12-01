@@ -1,16 +1,33 @@
 <script module>
   import { io } from "socket.io-client";
-  import { toast } from "@zerodevx/svelte-toast";
+  import { toastSuccess, toastError } from "./Toast.svelte";
   import { executeTurtleCommand } from "./Turtle.svelte";
 
   const socket = io();
+
+  let connected = false;
 
   export function emitRun(code) {
     socket.emit("run", code);
   }
 
   socket.on("connect", () => {
-    console.log("Connected to server");
+    if (!connected) {
+      console.log("Connected to the server.");
+      connected = true;
+    } else {
+      console.log("Reconnected to the server.");
+      toastSuccess("Reconnected to the server.");
+    }
+  });
+
+  socket.on("connect_error", () => {
+    toastError("Cannot connect to the server.");
+  });
+
+  socket.on("disconnect", () => {
+    console.error("Server connection closed.");
+    toastError("Server connection closed.");
   });
 
   socket.on("execute", (command) => {
@@ -18,8 +35,8 @@
     executeTurtleCommand(command);
   });
 
-  socket.on("error", (message) => {
+  socket.on("exception", (message) => {
     console.log("Error: ", message);
-    toast.push(message);
+    toastError(message);
   });
 </script>
