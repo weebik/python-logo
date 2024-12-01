@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "python_logo"
+name = "python-logo"
 version = "0.1.0"
 description = "Python Logo interpreter with web-based frontend."
 authors = [
@@ -16,6 +16,8 @@ python = "^3.10"
 flask = "^3.0.3"
 lark = "^1.2.2"
 flask-socketio = "^5.4.1"
+flask-gunicorn = "^0.1.1"
+eventlet = "^0.38.0"
 
 
 [tool.poetry.group.dev.dependencies]

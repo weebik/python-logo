@@ -1,3 +1,5 @@
+from flask import current_app as app
+from flask import request
 from flask_socketio import SocketIO
 
 from .exceptions import (
@@ -6,8 +8,7 @@ from .exceptions import (
     ParserInvalidCommandError,
     ParserUnexpectedTokenError,
 )
-from .interpreter import Interpreter
-from .parser import parse
+from .utils import run
 
 
 def register_events(socketio: SocketIO) -> None:
@@ -17,28 +18,31 @@ def register_events(socketio: SocketIO) -> None:
         socketio (SocketIO): The socketio object.
     """
 
+    @socketio.on("connect")
+    def on_connect() -> None:
+        """Event handler for when a client connects."""
+        app.logger.info("Client at %s has connected.", request.remote_addr)
+
+    @socketio.on("disconnect")
+    def on_disconnect() -> None:
+        """Event handler for when a client disconnects."""
+        app.logger.info("Client at %s has disconnected.", request.remote_addr)
+
     @socketio.on("run")
-    def run(code: str) -> None:
+    def on_run(code: str) -> None:
         """Event handler for when a client sends a run event.
 
         Args:
             code (str): The Logo code to run.
         """
         try:
-            tree = parse(code)
-        except (ParserInvalidCommandError, ParserUnexpectedTokenError) as e:
-            socketio.emit("error", str(e))
-            return
-
-        try:
-            interpreter = Interpreter(tree)
-        except InterpreterInvalidTreeError as e:
-            socketio.emit("error", str(e))
-            return
-
-        try:
-            for command in interpreter:
-                socketio.emit("execute", command)
-        except (InterpreterInvalidTreeError, InterpreterInvalidCommandError) as e:
-            socketio.emit("error", str(e))
-            return
+            logo_runner = run(code)
+            for command in logo_runner:
+                socketio.emit("execute", command, to=request.sid)
+        except (
+            InterpreterInvalidCommandError,
+            InterpreterInvalidTreeError,
+            ParserInvalidCommandError,
+            ParserUnexpectedTokenError,
+        ) as err:
+            socketio.emit("exception", str(err), to=request.sid)

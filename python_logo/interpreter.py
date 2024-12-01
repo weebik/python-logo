@@ -6,6 +6,7 @@ from .exceptions import InterpreterInvalidCommandError, InterpreterInvalidTreeEr
 class Interpreter:
     """Class to interpret parsed Logo programming language commands.
     Interpreted commands include only commands that affects the turtle directly.
+    It doesn't include commands that are used for control flow.
 
     Args:
         tree (dict): Parsed Logo tree with parse() function.
@@ -14,20 +15,20 @@ class Interpreter:
     def __init__(self, tree: dict) -> None:
         """Initializes the Interpreter instance."""
         try:
-            self._commands = tree["commands"]
+            self._commands = tree["tokens"]
         except KeyError as err:
             raise InterpreterInvalidTreeError from err
         except TypeError as err:
             raise InterpreterInvalidTreeError from err
 
     def _interpret(self, commands: list) -> Generator[dict, None, None]:
-        """Generates interpreted commands.
+        """Generates and interprets commands.
 
         Args:
             commands (list): List of parsed commands.
 
         Returns:
-            Generator[dict, None, None]: Generator of interpreted commands.
+            Generator[dict, None, None]: Generator of commands.
         """
         try:
             for command in commands:
@@ -57,18 +58,10 @@ class Interpreter:
         except KeyError as err:
             raise InterpreterInvalidTreeError from err
 
-    def interpret_all(self) -> dict:
-        """Interprets all parsed commands.
-
-        Returns:
-            dict: All interpreted commands.
-        """
-        return {"commands": list(self)}
-
     def __iter__(self) -> Iterator[dict]:
         """Iterates over commands and interprets them.
 
         Returns:
-            Iterator[dict]: Iterator of interpreted commands.
+            Iterator[dict]: Iterator of commands.
         """
         return self._interpret(self._commands)

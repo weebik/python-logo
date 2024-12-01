@@ -1,11 +1,12 @@
 <script lang="js">
-  import ResizableContainer from "./components/ResizableContainer.svelte";
-  import Header from "./components/Header.svelte";
   import ButtonBar from "./components/ButtonBar.svelte";
-  import Textarea from "./components/Textarea.svelte";
-  import Turtle from "./components/Turtle.svelte";
+  import Header from "./components/Header.svelte";
   import InfoBar from "./components/InfoBar.svelte";
+  import ResizableContainer from "./components/ResizableContainer.svelte";
   import Socket from "./components/Socket.svelte";
+  import Textarea from "./components/Textarea.svelte";
+  import Toast from "./components/Toast.svelte";
+  import Turtle from "./components/Turtle.svelte";
 </script>
 
 <main>
@@ -29,6 +30,7 @@
       </div>
     </div>
   </div>
+  <Toast />
   <Socket />
 </main>
 
