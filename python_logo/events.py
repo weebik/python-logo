@@ -1,4 +1,5 @@
 from flask import current_app as app
+from flask import request
 from flask_socketio import SocketIO
 
 from .exceptions import (
@@ -20,12 +21,12 @@ def register_events(socketio: SocketIO) -> None:
     @socketio.on("connect")
     def on_connect() -> None:
         """Event handler for when a client connects."""
-        app.logger.info("Client connected")
+        app.logger.info("Client at %s has connected.", request.remote_addr)
 
     @socketio.on("disconnect")
     def on_disconnect() -> None:
         """Event handler for when a client disconnects."""
-        app.logger.info("Client disconnected")
+        app.logger.info("Client at %s has disconnected.", request.remote_addr)
 
     @socketio.on("run")
     def on_run(code: str) -> None:
@@ -37,11 +38,11 @@ def register_events(socketio: SocketIO) -> None:
         try:
             logo_runner = run(code)
             for command in logo_runner:
-                socketio.emit("execute", command)
+                socketio.emit("execute", command, to=request.sid)
         except (
             InterpreterInvalidCommandError,
             InterpreterInvalidTreeError,
             ParserInvalidCommandError,
             ParserUnexpectedTokenError,
         ) as err:
-            socketio.emit("exception", str(err))
+            socketio.emit("exception", str(err), to=request.sid)
