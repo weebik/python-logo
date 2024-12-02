@@ -91,7 +91,7 @@ def test_if():
 
 def test_else():
     else_input = "if false [forward 100] else [right 90]"
-    else_response = [{"name": "right", "value": 100}]
+    else_response = [{"name": "right", "value": 90}]
     assert list(run(else_input)) == else_response
 
 
