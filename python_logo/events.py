@@ -5,6 +5,7 @@ from flask_socketio import SocketIO
 from .exceptions import (
     InterpreterInvalidCommandError,
     InterpreterInvalidTreeError,
+    InterpreterUnboundVariableError,
     ParserInvalidCommandError,
     ParserUnexpectedTokenError,
 )
@@ -42,6 +43,7 @@ def register_events(socketio: SocketIO) -> None:
         except (
             InterpreterInvalidCommandError,
             InterpreterInvalidTreeError,
+            InterpreterUnboundVariableError,
             ParserInvalidCommandError,
             ParserUnexpectedTokenError,
         ) as err:
