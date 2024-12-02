@@ -1,6 +1,10 @@
 from collections.abc import Generator, Iterator
 
-from .exceptions import InterpreterInvalidCommandError, InterpreterInvalidTreeError
+from .exceptions import (
+    InterpreterInvalidCommandError,
+    InterpreterInvalidTreeError,
+    InterpreterUnboundVariableError,
+)
 
 
 class Interpreter:
@@ -14,6 +18,7 @@ class Interpreter:
 
     def __init__(self, tree: dict) -> None:
         """Initializes the Interpreter instance."""
+        self._environment = {}
         try:
             self._commands = tree["tokens"]
         except KeyError as err:
@@ -34,8 +39,12 @@ class Interpreter:
             for command in commands:
                 name = command["name"]
                 match name:
+                    case "make":
+                        name = command["var_name"]
+                        value = self._evaluate(command)["value"]
+                        self._environment[name] = value
                     case "repeat":
-                        value = command["value"]
+                        value = self._evaluate(command)["value"]
                         for _ in range(value):
                             yield from self._interpret(command["commands"])
                     case "if":
@@ -52,11 +61,30 @@ class Interpreter:
                         | "penup"
                         | "pendown"
                     ):
-                        yield command
+                        yield self._evaluate(command)
                     case _:
                         raise InterpreterInvalidCommandError
         except KeyError as err:
             raise InterpreterInvalidTreeError from err
+
+    def _evaluate(self, command: dict) -> dict:
+        """Evaluates the command, which may contain variables.
+
+        Args:
+            command (dict): initial command
+
+        Returns:
+            dict: evaluated command
+        """
+        try:
+            try:
+                command["value"] = int(command["value"])
+            except ValueError:
+                command["value"] = self._environment[command["value"]]
+                return command
+        except KeyError as err:
+            raise InterpreterUnboundVariableError(command["value"]) from err
+        return command
 
     def __iter__(self) -> Iterator[dict]:
         """Iterates over commands and interprets them.

@@ -5,10 +5,11 @@ from .exceptions import ParserInvalidCommandError, ParserUnexpectedTokenError
 
 _LOGO_GRAMMAR = """
 start: command+
-command: ((forward | backward | left | right) number) \
+command: ((forward | backward | left | right) (number | variable)) \
          | (showturtle | hideturtle | penup | pendown) \
-         | ((repeat) number "[" command+ "]") \
-         | ((if_command) (true | false) "[" command+ "]")
+         | ((repeat) (number | variable) "[" command+ "]") \
+         | ((if_command) (true | false) "[" command+ "]") \
+         | ((make) var (number | variable))
 forward: "forward" | "fd"
 backward: "backward" | "bk"
 left: "left" | "lt"
@@ -19,11 +20,15 @@ penup: "penup" | "pu"
 pendown: "pendown" | "pd"
 repeat: "repeat"
 if_command: "if"
+make: "make"
+var: WORD
+variable: ":" var
 true: "true" | "True"
 false: "false" | "False"
 number: SIGNED_INT
 
 %import common.SIGNED_INT
+%import common.WORD
 %import common.WS
 %ignore WS
 """
@@ -37,6 +42,10 @@ class _LogoJsonTransformer(Transformer):
 
     def command(self, items: list) -> dict:
         name = items[0]
+        if name == "make":
+            var_name = items[1]
+            value = items[2]
+            return {"name": name, "var_name": var_name, "value": value}
         if name == "repeat":
             value = items[1]
             commands = items[2:]
@@ -80,6 +89,9 @@ class _LogoJsonTransformer(Transformer):
     def if_command(self, items: list) -> str:  # noqa: ARG002
         return "if"
 
+    def make(self, items: list) -> str:  # noqa: ARG002
+        return "make"
+
     def true(self, items: list) -> str:  # noqa: ARG002
         return "true"
 
@@ -88,6 +100,12 @@ class _LogoJsonTransformer(Transformer):
 
     def number(self, items: list) -> int:
         return int(items[0])
+
+    def var(self, items: list) -> int:
+        return str(items[0])
+
+    def variable(self, items: list) -> int:
+        return str(items[0])
 
 
 def parse(code: str) -> dict:

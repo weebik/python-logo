@@ -65,6 +65,24 @@ class InterpreterInvalidTreeError(Exception):
         super().__init__(self.message)
 
 
+class InterpreterUnboundVariableError(Exception):
+    """Raised when an unbound variable is given to the interpreter."""
+
+    def __init__(self, variable: str) -> None:
+        """Initializes the error.
+
+        Args:
+            variable (str): The variable with unbound value
+        """
+        default_message = (
+            "Unbound Variable: "
+            + variable
+            + " Make sure your program binds all of its variables."
+        )
+        self.message = default_message
+        super().__init__(self.message)
+
+
 class ParserInvalidCommandError(Exception):
     """Raised when an invalid command is given to the parser."""
 
