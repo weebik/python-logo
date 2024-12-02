@@ -89,6 +89,12 @@ def test_if():
     assert list(run(if_false_input)) == if_false_response
 
 
+def test_else():
+    else_input = "if false [forward 100] else [right 90]"
+    else_response = [{"name": "right", "value": 90}]
+    assert list(run(else_input)) == else_response
+
+
 def test_all():
     logo_input = """
         forward 20

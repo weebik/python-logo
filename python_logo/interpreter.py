@@ -51,6 +51,8 @@ class Interpreter:
                         condition = command["condition"]
                         if condition == "true":
                             yield from self._interpret(command["commands"])
+                        else:
+                            yield from self._interpret(command["else_commands"])
                     case "forward" | "backward" | "left" | "right":
                         yield self._evaluate(command)
                     case "hideturtle" | "showturtle" | "penup" | "pendown":
