@@ -51,17 +51,10 @@ class Interpreter:
                         condition = command["condition"]
                         if condition == "true":
                             yield from self._interpret(command["commands"])
-                    case (
-                        "forward"
-                        | "backward"
-                        | "left"
-                        | "right"
-                        | "hideturtle"
-                        | "showturtle"
-                        | "penup"
-                        | "pendown"
-                    ):
+                    case "forward" | "backward" | "left" | "right":
                         yield self._evaluate(command)
+                    case "hideturtle" | "showturtle" | "penup" | "pendown":
+                        yield command
                     case _:
                         raise InterpreterInvalidCommandError
         except KeyError as err:
