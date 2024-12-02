@@ -8,7 +8,8 @@ start: command+
 command: ((forward | backward | left | right) number) \
          | (showturtle | hideturtle | penup | pendown) \
          | ((repeat) number "[" command+ "]") \
-         | ((if_command) (true | false) "[" command+ "]")
+         | ((if_command) (true | false) "[" command+ "]"\
+            ((else_command) "[" command+ "]")?)
 forward: "forward" | "fd"
 backward: "backward" | "bk"
 left: "left" | "lt"
@@ -19,6 +20,7 @@ penup: "penup" | "pu"
 pendown: "pendown" | "pd"
 repeat: "repeat"
 if_command: "if"
+else_command: "else"
 true: "true" | "True"
 false: "false" | "False"
 number: SIGNED_INT
@@ -43,8 +45,15 @@ class _LogoJsonTransformer(Transformer):
             return {"name": name, "value": value, "commands": commands}
         if name == "if":
             condition = items[1]
-            commands = items[2:]
-            return {"name": name, "condition": condition, "commands": commands}
+            if "else" in items:
+                separator_index = items.index("else")
+                commands = items[2:separator_index]
+                else_commands = items[separator_index+1:]
+            else:
+                commands = items[2:]
+                else_commands = []
+            return {"name": name, "condition": condition, "commands": commands,
+                    "else_commands": else_commands}
         if name in ["forward", "backward", "left", "right"]:
             value = items[1]
             return {"name": name, "value": value}
@@ -79,6 +88,9 @@ class _LogoJsonTransformer(Transformer):
 
     def if_command(self, items: list) -> str:  # noqa: ARG002
         return "if"
+
+    def else_command(self, items: list) -> str:  # noqa: ARG002
+        return "else"
 
     def true(self, items: list) -> str:  # noqa: ARG002
         return "true"
