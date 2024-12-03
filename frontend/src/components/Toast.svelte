@@ -1,5 +1,5 @@
 <script module>
-  import { SvelteToast, toast } from "@zerodevx/svelte-toast";
+  import { toast } from "@zerodevx/svelte-toast";
 
   export function toastSuccess(message) {
     toast.push(message, {
@@ -28,6 +28,10 @@
       },
     });
   }
+</script>
+
+<script>
+  import { SvelteToast } from "@zerodevx/svelte-toast";
 </script>
 
 <SvelteToast />

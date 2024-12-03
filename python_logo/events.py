@@ -48,3 +48,6 @@ def register_events(socketio: SocketIO) -> None:
             ParserUnexpectedTokenError,
         ) as err:
             socketio.emit("exception", str(err), to=request.sid)
+        except Exception as err:
+            socketio.emit("exception", f"Unknown exception: {err}", to=request.sid)
+            app.logger.exception()

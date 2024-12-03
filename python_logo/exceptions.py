@@ -68,18 +68,18 @@ class InterpreterInvalidTreeError(Exception):
 class InterpreterUnboundVariableError(Exception):
     """Raised when an unbound variable is given to the interpreter."""
 
-    def __init__(self, variable: str) -> None:
+    default_message = (
+        "Unbound Variable: '%s'. " "Make sure your program binds all of its variables."
+    )
+
+    def __init__(self, variable: str, message: str = default_message) -> None:
         """Initializes the error.
 
         Args:
-            variable (str): The variable with unbound value
+            variable (str): The variable with unbound value.
+            message (str): The error message.
         """
-        default_message = (
-            "Unbound Variable: "
-            + variable
-            + " Make sure your program binds all of its variables."
-        )
-        self.message = default_message
+        self.message = message % variable
         super().__init__(self.message)
 
 

@@ -6,7 +6,9 @@
   let showContactModal = false;
 </script>
 
-<div class="info-bar d-flex align-items-center justify-content-end w-100">
+<div
+  class="info-bar footer d-flex align-items-center justify-content-end w-100"
+>
   <div class="d-flex gap-4 p-0 me-5">
     <button
       class="p-0 m-0 text-nowrap"
