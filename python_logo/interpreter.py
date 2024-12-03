@@ -71,14 +71,11 @@ class Interpreter:
         Returns:
             dict: evaluated command
         """
-        try:
+        if type(command["value"]) is not int:
             try:
-                command["value"] = int(command["value"])
-            except ValueError:
                 command["value"] = self._environment[command["value"]]
-                return command
-        except KeyError as err:
-            raise InterpreterUnboundVariableError(command["value"]) from err
+            except KeyError as err:
+                raise InterpreterUnboundVariableError(command["value"]) from err
         return command
 
     def __iter__(self) -> Iterator[dict]:

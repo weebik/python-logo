@@ -95,6 +95,12 @@ def test_else():
     assert list(run(else_input)) == else_response
 
 
+def test_variables():
+    variables_input = "make var 100 forward :var"
+    variables_response = [{"name": "forward", "value": 100}]
+    assert list(run(variables_input)) == variables_response
+
+
 def test_all():
     logo_input = """
         forward 20
@@ -113,7 +119,9 @@ def test_all():
         pu
         pendown
         pd
-        repeat 4 [forward 100 right 90]
+        make varrpt 4
+        make varfd 100
+        repeat :varrpt [forward :varfd right 90]
         if true [forward 100]
         if false [forward 100]
     """

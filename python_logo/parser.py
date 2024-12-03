@@ -57,12 +57,16 @@ class _LogoJsonTransformer(Transformer):
             if "else" in items:
                 separator_index = items.index("else")
                 commands = items[2:separator_index]
-                else_commands = items[separator_index+1:]
+                else_commands = items[separator_index + 1 :]
             else:
                 commands = items[2:]
                 else_commands = []
-            return {"name": name, "condition": condition, "commands": commands,
-                    "else_commands": else_commands}
+            return {
+                "name": name,
+                "condition": condition,
+                "commands": commands,
+                "else_commands": else_commands,
+            }
         if name in ["forward", "backward", "left", "right"]:
             value = items[1]
             return {"name": name, "value": value}
@@ -100,6 +104,7 @@ class _LogoJsonTransformer(Transformer):
 
     def make(self, items: list) -> str:  # noqa: ARG002
         return "make"
+
     def else_command(self, items: list) -> str:  # noqa: ARG002
         return "else"
 
@@ -112,10 +117,10 @@ class _LogoJsonTransformer(Transformer):
     def number(self, items: list) -> int:
         return int(items[0])
 
-    def var(self, items: list) -> int:
+    def var(self, items: list) -> str:
         return str(items[0])
 
-    def variable(self, items: list) -> int:
+    def variable(self, items: list) -> str:
         return str(items[0])
 
 
