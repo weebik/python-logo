@@ -1,50 +1,74 @@
 <script module>
   import { emitRun } from "./Socket.svelte";
 
+  let turtle;
+
   export function runTurtle(code) {
     emitRun(code);
   }
 
   export function resetTurtle() {
-    reset();
+    turtle.goto(0, 0);
+    turtle.setColor("black");
+    turtle.setAngle(0);
+    turtle.putPenDown();
+    turtle.show();
+    turtle.clear();
   }
 
   export function executeTurtleCommand(command) {
     switch (command.name) {
       case "forward":
-        forward(command.value);
+        turtle.forward(command.value);
         break;
       case "backward":
-        left(180);
-        forward(command.value);
-        left(180);
+        turtle.left(180);
+        turtle.forward(command.value);
+        turtle.left(180);
         break;
       case "left":
-        left(command.value);
+        turtle.left(command.value);
         break;
       case "right":
-        right(command.value);
+        turtle.right(command.value);
         break;
       case "penup":
-        penup();
+        turtle.putPenUp();
         break;
       case "pendown":
-        pendown();
+        turtle.putPenDown();
+        break;
+      case "hideturtle":
+        turtle.hide();
+        break;
+      case "showturtle":
+        turtle.show();
         break;
     }
   }
 </script>
 
-<svelte:head>
-  <script src="/lib/turtle.js" type="text/javascript"></script>
-</svelte:head>
+<script>
+  import { onMount } from "svelte";
+  import { Turtle } from "better-turtle";
+
+  let turtleCanvas;
+
+  let turtleOptions = {
+    defaultColor: "black",
+  };
+
+  onMount(() => {
+    const ctx = turtleCanvas.getContext("2d", { willReadFrequently: true });
+    turtle = new Turtle(ctx, turtleOptions);
+    turtle.draw();
+  });
+</script>
 
 <div
   class="right-container d-flex flex-col align-items-center justify-content-center p-5"
 >
-  <canvas id="turtlecanvas" width="600" height="600"></canvas>
-  <canvas id="imagecanvas" width="600" height="600" style="display: none;"
-  ></canvas>
+  <canvas bind:this={turtleCanvas} width="600" height="600"></canvas>
 </div>
 
 <style>
@@ -54,8 +78,8 @@
   }
   canvas {
     width: 100%;
-    max-height: calc(90vh - 140px);
-    max-width: calc(90vh - 140px);
+    max-height: calc(90vh - 160px);
+    max-width: calc(90vh - 160px);
     background-color: #cae5be;
     border-radius: 10px;
     z-index: 0;
