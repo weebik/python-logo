@@ -20,30 +20,22 @@
     switch (command.name) {
       case "forward":
         turtle.forward(command.value);
-        break;
       case "backward":
         turtle.left(180);
         turtle.forward(command.value);
         turtle.left(180);
-        break;
       case "left":
         turtle.left(command.value);
-        break;
       case "right":
         turtle.right(command.value);
-        break;
       case "penup":
         turtle.putPenUp();
-        break;
       case "pendown":
         turtle.putPenDown();
-        break;
       case "hideturtle":
         turtle.hide();
-        break;
       case "showturtle":
         turtle.show();
-        break;
     }
   }
 </script>

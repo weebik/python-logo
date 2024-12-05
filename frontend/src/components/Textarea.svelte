@@ -1,5 +1,13 @@
 <script module>
-  export let code = "";
+  let code = $state("");
+
+  export function getCode() {
+    return code;
+  }
+
+  export function setCode(newCode) {
+    code = newCode;
+  }
 </script>
 
 <div class="m-5 h-100">
