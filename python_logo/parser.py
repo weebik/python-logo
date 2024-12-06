@@ -7,10 +7,9 @@ _LOGO_GRAMMAR = """
 start: command+
 command: ((forward | backward | left | right) (number | variable)) \
          | (showturtle | hideturtle | penup | pendown) \
-         | ((repeat) (number | variable) "[" command+ "]") \
-         | ((make) var (number | variable))
-         | ((if_command) (true | false) "[" command+ "]"\
-            ((else_command) "[" command+ "]")?)
+         | (repeat) \
+         | (make) \
+         | (if_command)
 forward: "forward" | "fd"
 backward: "backward" | "bk"
 left: "left" | "lt"
@@ -19,9 +18,9 @@ showturtle: "showturtle" | "st"
 hideturtle: "hideturtle" | "ht"
 penup: "penup" | "pu"
 pendown: "pendown" | "pd"
-repeat: "repeat"
-if_command: "if"
-make: "make"
+repeat: "repeat" (number | variable) "[" command+ "]"
+if_command: "if" (true | false) "[" command+ "]" ((else_command) "[" command+ "]")?
+make: "make" var (number | variable)
 var: WORD
 variable: ":" var
 else_command: "else"
@@ -44,33 +43,10 @@ class _LogoJsonTransformer(Transformer):
 
     def command(self, items: list) -> dict:
         name = items[0]
-        if name == "make":
-            var_name = items[1]
-            value = items[2]
-            return {"name": name, "var_name": var_name, "value": value}
-        if name == "repeat":
-            value = items[1]
-            commands = items[2:]
-            return {"name": name, "value": value, "commands": commands}
-        if name == "if":
-            condition = items[1]
-            if "else" in items:
-                separator_index = items.index("else")
-                commands = items[2:separator_index]
-                else_commands = items[separator_index + 1 :]
-            else:
-                commands = items[2:]
-                else_commands = []
-            return {
-                "name": name,
-                "condition": condition,
-                "commands": commands,
-                "else_commands": else_commands,
-            }
         if name in ["forward", "backward", "left", "right"]:
             value = items[1]
             return {"name": name, "value": value}
-        return {"name": name}
+        return name
 
     def forward(self, items: list) -> str:  # noqa: ARG002
         return "forward"
@@ -96,14 +72,31 @@ class _LogoJsonTransformer(Transformer):
     def pendown(self, items: list) -> str:  # noqa: ARG002
         return "pendown"
 
-    def repeat(self, items: list) -> str:  # noqa: ARG002
-        return "repeat"
+    def repeat(self, items: list) -> str:
+        value = items[0]
+        commands = items[1:]
+        return {"name": "repeat", "value": value, "commands": commands}
 
-    def if_command(self, items: list) -> str:  # noqa: ARG002
-        return "if"
+    def if_command(self, items: list) -> str:
+        condition = items[0]
+        if "else" in items:
+            separator_index = items.index("else")
+            commands = items[1:separator_index]
+            else_commands = items[separator_index + 1 :]
+        else:
+            commands = items[1:]
+            else_commands = []
+        return {
+            "name": "if",
+            "condition": condition,
+            "commands": commands,
+            "else_commands": else_commands,
+        }
 
-    def make(self, items: list) -> str:  # noqa: ARG002
-        return "make"
+    def make(self, items: list) -> str:
+        var_name = items[0]
+        value = items[1]
+        return {"name": "make", "var_name": var_name, "value": value}
 
     def else_command(self, items: list) -> str:  # noqa: ARG002
         return "else"
