@@ -57,26 +57,26 @@
       </button>
     </div>
     <div class="d-flex p-0 gap-2">
-      <button class="p-0 m-0" title="Import code">
+      <button class="p-0 m-0" title="Export code">
         <input
-          id="import-code-input"
+          id="export-code-input"
           type="file"
           accept=".txt"
           bind:files
           bind:this={input}
           hidden
         />
-        <label for="import-code-input">
-          <Icon name="importCode" />
+        <label for="export-code-input">
+          <Icon name="exportCode" />
         </label>
       </button>
       <button
         class="p-0 m-0"
-        title="Export code"
+        title="Import code"
         disabled={!getCode().trim()}
         onclick={handleExport}
       >
-        <Icon name="exportCode" />
+        <Icon name="importCode" />
       </button>
     </div>
   </div>
@@ -112,6 +112,8 @@
       brightness(113%) contrast(96%);
   }
   button:disabled {
-    filter: grayscale(100%);
+    filter: invert(90%) sepia(3%) saturate(1480%) hue-rotate(53deg)
+      brightness(113%) contrast(106%);
+    opacity: 0.5;
   }
 </style>
