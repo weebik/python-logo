@@ -15,20 +15,20 @@
     resetTurtle();
   }
 
-  // handleImport
+  // handleUpload
   $effect(() => {
     if (files) {
       const reader = new FileReader();
       reader.onload = (event) => {
         setCode(event.target.result);
-        toastSuccess("Code imported successfully.");
+        toastSuccess("Code uploaded successfully.");
       };
       reader.readAsText(files[0]);
       input.value = "";
     }
   });
 
-  function handleExport() {
+  function handleDownload() {
     const blob = new Blob([getCode().trim()], { type: "text/plain" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -36,7 +36,7 @@
     a.click();
     URL.revokeObjectURL(a.href);
     a.remove();
-    toastSuccess("Code exported successfully.");
+    toastSuccess("Code downloaded successfully.");
   }
 </script>
 
@@ -57,26 +57,26 @@
       </button>
     </div>
     <div class="d-flex p-0 gap-2">
-      <button class="p-0 m-0" title="Import code">
+      <button class="p-0 m-0" title="Upload code">
         <input
-          id="import-code-input"
+          id="upload-code-input"
           type="file"
           accept=".txt"
           bind:files
           bind:this={input}
           hidden
         />
-        <label for="import-code-input">
-          <Icon name="importCode" />
+        <label for="upload-code-input">
+          <Icon name="uploadCode" />
         </label>
       </button>
       <button
         class="p-0 m-0"
-        title="Export code"
+        title="Download code"
         disabled={!getCode().trim()}
-        onclick={handleExport}
+        onclick={handleDownload}
       >
-        <Icon name="exportCode" />
+        <Icon name="downloadCode" />
       </button>
     </div>
   </div>
@@ -101,6 +101,7 @@
     filter: invert(90%) sepia(3%) saturate(1480%) hue-rotate(53deg)
       brightness(113%) contrast(106%);
   }
+
   button:enabled:hover {
     scale: 1.1;
     filter: invert(90%) sepia(16%) saturate(674%) hue-rotate(62deg)
@@ -112,6 +113,8 @@
       brightness(113%) contrast(96%);
   }
   button:disabled {
-    filter: grayscale(100%);
+    filter: invert(90%) sepia(3%) saturate(1480%) hue-rotate(53deg)
+      brightness(113%) contrast(106%);
+    opacity: 0.5;
   }
 </style>
