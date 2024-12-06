@@ -46,6 +46,8 @@ class _LogoJsonTransformer(Transformer):
         if name in ["forward", "backward", "left", "right"]:
             value = items[1]
             return {"name": name, "value": value}
+        if name in ["showturtle", "hideturtle", "penup", "pendown"]:
+            return {"name": name}
         return name
 
     def forward(self, items: list) -> str:  # noqa: ARG002
