@@ -101,6 +101,7 @@
     filter: invert(90%) sepia(3%) saturate(1480%) hue-rotate(53deg)
       brightness(113%) contrast(106%);
   }
+
   button:enabled:hover {
     scale: 1.1;
     filter: invert(90%) sepia(16%) saturate(674%) hue-rotate(62deg)

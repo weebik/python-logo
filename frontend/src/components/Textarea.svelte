@@ -59,7 +59,6 @@
     background-color: #153246;
     border-radius: 1rem;
     overflow: hidden;
-    color: white;
   }
 
   .line-numbers {
