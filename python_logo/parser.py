@@ -5,19 +5,19 @@ from .exceptions import ParserInvalidCommandError, ParserUnexpectedTokenError
 
 _LOGO_GRAMMAR = """
 start: command+
-command: ((forward | backward | left | right) (number | variable)) \
-         | (showturtle | hideturtle | penup | pendown) \
-         | (repeat) \
-         | (make) \
-         | (if_command)
-forward: "forward" | "fd"
-backward: "backward" | "bk"
-left: "left" | "lt"
-right: "right" | "rt"
+command: (no_arg_command) | (one_arg_command) \
+         | (repeat) | (if_command) | (make)
+
 showturtle: "showturtle" | "st"
 hideturtle: "hideturtle" | "ht"
 penup: "penup" | "pu"
 pendown: "pendown" | "pd"
+no_arg_command: showturtle | hideturtle | penup | pendown
+forward: "forward" | "fd"
+backward: "backward" | "bk"
+left: "left" | "lt"
+right: "right" | "rt"
+one_arg_command: (forward | backward | left | right) (number | variable)
 repeat: "repeat" (number | variable) "[" command+ "]"
 if_command: "if" (true | false) "[" command+ "]" ((else_command) "[" command+ "]")?
 make: "make" var (number | variable)
@@ -42,13 +42,22 @@ class _LogoJsonTransformer(Transformer):
         return {"tokens": items}
 
     def command(self, items: list) -> dict:
-        name = items[0]
-        if name in ["forward", "backward", "left", "right"]:
-            value = items[1]
-            return {"name": name, "value": value}
-        if name in ["showturtle", "hideturtle", "penup", "pendown"]:
-            return {"name": name}
-        return name
+        return items[0]
+
+    def showturtle(self, items: list) -> str:  # noqa: ARG002
+        return "showturtle"
+
+    def hideturtle(self, items: list) -> str:  # noqa: ARG002
+        return "hideturtle"
+
+    def penup(self, items: list) -> str:  # noqa: ARG002
+        return "penup"
+
+    def pendown(self, items: list) -> str:  # noqa: ARG002
+        return "pendown"
+
+    def no_arg_command(self, items: list) -> str:
+        return {"name": items[0]}
 
     def forward(self, items: list) -> str:  # noqa: ARG002
         return "forward"
@@ -62,17 +71,10 @@ class _LogoJsonTransformer(Transformer):
     def right(self, items: list) -> str:  # noqa: ARG002
         return "right"
 
-    def showturtle(self, items: list) -> str:  # noqa: ARG002
-        return "showturtle"
-
-    def hideturtle(self, items: list) -> str:  # noqa: ARG002
-        return "hideturtle"
-
-    def penup(self, items: list) -> str:  # noqa: ARG002
-        return "penup"
-
-    def pendown(self, items: list) -> str:  # noqa: ARG002
-        return "pendown"
+    def one_arg_command(self, items: list) -> str:
+        name = items[0]
+        value = items[1]
+        return {"name": name, "value": value}
 
     def repeat(self, items: list) -> str:
         value = items[0]
