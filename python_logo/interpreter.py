@@ -77,7 +77,7 @@ class Interpreter:
             return value
 
         # Value is a single variable from dictionary
-        if len(value) == 1 and isinstance(value, str):
+        if not isinstance(value, list):
             try:
                 return self._variables[value]
             except KeyError as err:
