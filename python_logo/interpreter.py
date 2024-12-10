@@ -54,8 +54,8 @@ class Interpreter:
                         else:
                             yield from self._interpret(command["else_commands"])
                     case "forward" | "backward" | "left" | "right":
-                        command["value"] = self._evaluate(command["value"])
-                        yield command
+                        evaluated_value = self._evaluate(command["value"])
+                        yield {**command, "value": evaluated_value}
                     case "hideturtle" | "showturtle" | "penup" | "pendown":
                         yield command
                     case _:

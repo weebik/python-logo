@@ -12,8 +12,8 @@ forward: "forward" | "fd"
 backward: "backward" | "bk"
 left: "left" | "lt"
 right: "right" | "rt"
-one_arg_command: (forward | backward | left | right) (number | variable)
-repeat: "repeat" (number | variable) "[" command+ "]"
+one_arg_command: (forward | backward | left | right) (number | variable | expression)
+repeat: "repeat" (number | variable | expression) "[" command+ "]"
 if_command: "if" (true | false) "[" command+ "]" ((else_command) "[" command+ "]")?
 make: "make" var (number | variable | expression)
 var: WORD
