@@ -47,9 +47,9 @@
     If you have any questions or suggestions, feel free to contact us:
     <ul>
       <li>Krystian Ćwikliński: krystian.samaa@gmail.com</li>
-      <li>Mikołaj Kalitka: mkalitka@gmail.com</li>
-      <li>Yaryna Rachkevych: yaryna@gmail.com</li>
-      <li>Magda Tytoń: magda@gmail.com</li>
+      <li>Mikołaj Kalitka: mikolaj.kalitka@proton.me</li>
+      <li>Yaryna Rachkevych: rarynka28@gmail.com</li>
+      <li>Magda Tytoń: magdaeelna@gmail.com</li>
     </ul>
   </Modal>
 {/if}
