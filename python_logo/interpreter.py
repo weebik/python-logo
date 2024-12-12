@@ -40,12 +40,12 @@ class Interpreter:
                 name = command["name"]
                 match name:
                     case "make":
-                        name = command["var_name"]
+                        var_name = command["var_name"]
                         value = self._evaluate(command["value"])
-                        self._variables[name] = value
+                        self._variables[var_name] = value
                     case "repeat":
                         value = self._evaluate(command["value"])
-                        for _ in range(value):
+                        for _ in range(int(value)):
                             yield from self._interpret(command["commands"])
                     case "if":
                         condition = command["condition"]
@@ -54,8 +54,8 @@ class Interpreter:
                         else:
                             yield from self._interpret(command["else_commands"])
                     case "forward" | "backward" | "left" | "right":
-                        evaluated_value = self._evaluate(command["value"])
-                        yield {**command, "value": evaluated_value}
+                        command["value"] = self._evaluate(command["value"])
+                        yield command
                     case "hideturtle" | "showturtle" | "penup" | "pendown":
                         yield command
                     case _:
@@ -63,41 +63,58 @@ class Interpreter:
         except KeyError as err:
             raise InterpreterInvalidTreeError from err
 
-    def _evaluate(self, value: int | str) -> int | None:
+    def _evaluate(self, value: float | str | dict) -> float:  # noqa: C901, PLR0911
         """Evaluates the value of the possible variable.
 
         Args:
-            value (int | str): Value or variable to evaluate.
+            value (int | str | dict): Value, variable or expression to evaluate.
 
         Returns:
             int: Value of the possible variable.
         """
-        # Value is  just a number
-        if isinstance(value, int):
+        # Value is a number.
+        if isinstance(value, float):
             return value
 
-        # Value is a single variable from dictionary
-        if not isinstance(value, list):
+        # Value is a variable.
+        if isinstance(value, str):
             try:
                 return self._variables[value]
             except KeyError as err:
                 raise InterpreterUnboundVariableError(value) from err
 
-        # Value is an expression
-        value = value[0]
-        for command in value:
-            match command:
-                case "arithmetic_op":
-                    operator = value["arithmetic_op"]
-                    operand1 = value["operands"][0]
-                    operand2 = value["operands"][1]
-                    if operator == "+":
-                        return self._evaluate(self._evaluate(operand1)
-                                              + self._evaluate(operand2))
-                    if operator == "-":
-                        return self._evaluate(self._evaluate(operand1)
-                                              - self._evaluate(operand2))
-        return None
+        # Value is an expression.
+        if isinstance(value, dict):
+            try:
+                match value["op"]:
+                    case "+":
+                        return self._evaluate(value["left"]) + self._evaluate(
+                            value["right"]
+                        )
+                    case "-":
+                        return self._evaluate(value["left"]) - self._evaluate(
+                            value["right"]
+                        )
+                    case "*":
+                        return self._evaluate(value["left"]) * self._evaluate(
+                            value["right"]
+                        )
+                    case "/":
+                        return self._evaluate(value["left"]) / self._evaluate(
+                            value["right"]
+                        )
+                    case "^":
+                        return self._evaluate(value["left"]) ** self._evaluate(
+                            value["right"]
+                        )
+                    case "neg":
+                        return -self._evaluate(value["value"])
+                    case _:
+                        raise InterpreterInvalidCommandError
+            except KeyError as err:
+                raise InterpreterInvalidTreeError from err
+
+        raise InterpreterInvalidTreeError
 
     def __iter__(self) -> Iterator[dict]:
         """Iterates over commands and interprets them.
