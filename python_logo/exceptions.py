@@ -69,7 +69,7 @@ class InterpreterUnboundVariableError(Exception):
     """Raised when an unbound variable is given to the interpreter."""
 
     default_message = (
-        "Unbound Variable: '%s'. " "Make sure your program binds all of its variables."
+        "Unbound Variable: '%s'. Make sure your program binds all of its variables."
     )
 
     def __init__(self, variable: str, message: str = default_message) -> None:
