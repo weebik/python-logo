@@ -1,8 +1,55 @@
 import lark.exceptions
-from lark import Lark, Transformer
+from lark import Lark, Transformer, v_args
 
 from .exceptions import ParserInvalidCommandError, ParserUnexpectedTokenError
-from .grammar import _LOGO_GRAMMAR
+
+_LOGO_GRAMMAR = """
+start: command+
+?command: hideturtle | showturtle | penup | pendown
+    | forward | backward | left | right
+    | repeat | if_command | make
+
+number: NUMBER
+var_name: /[a-zA-Z_-]+/
+variable: ":" var_name
+
+?expr: term
+    | expr "+" term -> add
+    | expr "-" term -> sub
+?term: power
+    | term "*" power -> mul
+    | term "/" power -> div
+?power: factor
+    | power "^" factor -> pow
+?factor: atom
+    | "-" factor -> neg
+    | "(" expr ")"
+?atom: number
+    | variable
+
+hideturtle: "hideturtle" | "ht"
+showturtle: "showturtle" | "st"
+penup: "penup" | "pu"
+pendown: "pendown" | "pd"
+
+forward: ("forward" | "fd") expr
+backward: ("backward" | "bk") expr
+left: ("left" | "lt") expr
+right: ("right" | "rt") expr
+
+repeat: "repeat" expr "[" command+ "]"
+
+if_command: "if" (true | false) "[" command+ "]" ((else_command) "[" command+ "]")?
+else_command: "else"
+true: "true" | "True"
+false: "false" | "False"
+
+make: "make" var_name expr
+
+%import common.NUMBER
+%import common.WS
+%ignore WS
+"""
 
 
 class _LogoJsonTransformer(Transformer):
@@ -11,47 +58,64 @@ class _LogoJsonTransformer(Transformer):
     def start(self, items: list) -> dict:
         return {"tokens": items}
 
-    def command(self, items: list) -> dict:
-        return items[0]
+    @v_args(inline=True)
+    def number(self, value: str) -> float:
+        return float(value)
 
-    def showturtle(self, items: list) -> str:  # noqa: ARG002
-        return "showturtle"
+    @v_args(inline=True)
+    def var_name(self, value: str) -> str:
+        return str(value)
 
-    def hideturtle(self, items: list) -> str:  # noqa: ARG002
-        return "hideturtle"
+    @v_args(inline=True)
+    def variable(self, value: str) -> str:
+        return str(value)
 
-    def penup(self, items: list) -> str:  # noqa: ARG002
-        return "penup"
+    def add(self, items: list) -> dict:
+        return {"op": "+", "left": items[0], "right": items[1]}
 
-    def pendown(self, items: list) -> str:  # noqa: ARG002
-        return "pendown"
+    def sub(self, items: list) -> dict:
+        return {"op": "-", "left": items[0], "right": items[1]}
 
-    def no_arg_command(self, items: list) -> str:
-        return {"name": items[0]}
+    def mul(self, items: list) -> dict:
+        return {"op": "*", "left": items[0], "right": items[1]}
 
-    def forward(self, items: list) -> str:  # noqa: ARG002
-        return "forward"
+    def div(self, items: list) -> dict:
+        return {"op": "/", "left": items[0], "right": items[1]}
 
-    def backward(self, items: list) -> str:  # noqa: ARG002
-        return "backward"
+    def pow(self, items: list) -> dict:
+        return {"op": "^", "left": items[0], "right": items[1]}
 
-    def left(self, items: list) -> str:  # noqa: ARG002
-        return "left"
+    def neg(self, items: list) -> dict:
+        return {"op": "neg", "value": items[0]}
 
-    def right(self, items: list) -> str:  # noqa: ARG002
-        return "right"
+    def hideturtle(self, items: list) -> dict:  # noqa: ARG002
+        return {"name": "hideturtle"}
 
-    def one_arg_command(self, items: list) -> str:
-        name = items[0]
-        value = items[1]
-        return {"name": name, "value": value}
+    def showturtle(self, items: list) -> dict:  # noqa: ARG002
+        return {"name": "showturtle"}
 
-    def repeat(self, items: list) -> str:
-        value = items[0]
-        commands = items[1:]
-        return {"name": "repeat", "value": value, "commands": commands}
+    def penup(self, items: list) -> dict:  # noqa: ARG002
+        return {"name": "penup"}
 
-    def if_command(self, items: list) -> str:
+    def pendown(self, items: list) -> dict:  # noqa: ARG002
+        return {"name": "pendown"}
+
+    def forward(self, items: list) -> dict:
+        return {"name": "forward", "value": items[0]}
+
+    def backward(self, items: list) -> dict:
+        return {"name": "backward", "value": items[0]}
+
+    def left(self, items: list) -> dict:
+        return {"name": "left", "value": items[0]}
+
+    def right(self, items: list) -> dict:
+        return {"name": "right", "value": items[0]}
+
+    def repeat(self, items: list) -> dict:
+        return {"name": "repeat", "value": items[0], "commands": items[1:]}
+
+    def if_command(self, items: list) -> dict:
         condition = items[0]
         if "else" in items:
             separator_index = items.index("else")
@@ -67,11 +131,6 @@ class _LogoJsonTransformer(Transformer):
             "else_commands": else_commands,
         }
 
-    def make(self, items: list) -> str:
-        var_name = items[0]
-        value = items[1]
-        return {"name": "make", "var_name": var_name, "value": value}
-
     def else_command(self, items: list) -> str:  # noqa: ARG002
         return "else"
 
@@ -81,30 +140,9 @@ class _LogoJsonTransformer(Transformer):
     def false(self, items: list) -> str:  # noqa: ARG002
         return "false"
 
-    def number(self, items: list) -> int:
-        return int(items[0])
+    def make(self, items: list) -> dict:
+        return {"name": "make", "var_name": items[0], "value": items[1]}
 
-    def var(self, items: list) -> str:
-        return str(items[0])
-
-    def variable(self, items: list) -> str:
-        return str(items[0])
-
-    def plus(self, items: list) -> str:  # noqa: ARG002
-        return "+"
-
-    def minus(self, items: list) -> str:  # noqa: ARG002
-        return "-"
-
-    def operator(self, items: list) -> str:
-        return items[0]
-
-    def term(self, items: list) -> str:
-        return items[0]
-
-    def expression(self, items: list) -> str:
-        operator = items[1]
-        return [{"arithmetic_op": operator, "operands": [items[0], items[2]]}]
 
 def parse(code: str) -> dict:
     """Parses the given Logo code and returns its JSON representation.

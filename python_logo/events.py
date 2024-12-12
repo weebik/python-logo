@@ -37,6 +37,7 @@ class _Worker:
         """Starts the Logo code execution and emits the commands to the client."""
         self.socketio.emit("task", {"status": "running"}, to=self.client_id)
         eventlet.sleep(0.01)
+
         try:
             logo_runner = run(self.code)
             for command in logo_runner:
@@ -51,6 +52,7 @@ class _Worker:
             ParserInvalidCommandError,
             ParserUnexpectedTokenError,
         ) as err:
+            self._switch = False
             self.socketio.emit(
                 "task",
                 {"status": "failed", "message": str(err)},
@@ -59,6 +61,7 @@ class _Worker:
             eventlet.sleep(0.01)
             return
         except Exception as err:
+            self._switch = False
             self.socketio.emit(
                 "task",
                 {"status": "failed", "message": str(err)},
@@ -68,9 +71,7 @@ class _Worker:
             app.logger.exception()
             return
 
-        self.socketio.emit("task", {"status": "done"}, to=self.client_id)
-        eventlet.sleep(0.01)
-        self._switch = False
+        self.stop()
 
     def is_running(self) -> bool:
         """Returns whether the Logo code execution is running.
