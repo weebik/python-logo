@@ -1,9 +1,11 @@
 from collections.abc import Generator, Iterator
 
 from .exceptions import (
+    InterpreterFunctionExecutionError,
     InterpreterInvalidCommandError,
     InterpreterInvalidTreeError,
     InterpreterUnboundVariableError,
+    InterpreterUndefinedFunctionError,
 )
 
 
@@ -19,6 +21,7 @@ class Interpreter:
     def __init__(self, tree: dict) -> None:
         """Initializes the Interpreter instance."""
         self._variables = {}
+        self._fuctions = {}
         try:
             self._commands = tree["tokens"]
         except KeyError as err:
@@ -39,12 +42,28 @@ class Interpreter:
             for command in commands:
                 name = command["name"]
                 match name:
+                    case "func_def":
+                        func_name = command["func_name"]
+                        func_commands = command["commands"]
+                        self._fuctions[func_name] = func_commands
+                    case "func_call":
+                        func_name = command["func_name"]
+                        try:
+                            func_commands = self._fuctions[func_name]
+                            try:
+                                yield from self._interpret(func_commands)
+                            except Exception as execution_err:
+                                raise InterpreterFunctionExecutionError (func_name, \
+                                                str(execution_err)) from execution_err
+                        except KeyError as err:
+                            raise InterpreterUndefinedFunctionError(func_name) from err
                     case "make":
                         var_name = command["var_name"]
                         value = self._evaluate(command["value"])
                         self._variables[var_name] = value
                     case "repeat":
                         value = self._evaluate(command["value"])
+                        print(command)
                         for _ in range(int(value)):
                             yield from self._interpret(command["commands"])
                     case "if":
