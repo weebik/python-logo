@@ -46,8 +46,10 @@ true: "true" | "True"
 false: "false" | "False"
 
 make: "make" var_name expr
-func_def: "to" func_name command+ "end"
-func_call: func_name
+func_def: "to" func_name arguments command+ "end"
+func_call: func_name (expr)*
+
+arguments: (variable)*
 
 %import common.NUMBER
 %import common.WS
@@ -147,15 +149,18 @@ class _LogoJsonTransformer(Transformer):
     def false(self, items: list) -> str:  # noqa: ARG002
         return "false"
 
+    def arguments(self, items: list) -> str:
+        return items
+
     def make(self, items: list) -> dict:
         return {"name": "make", "var_name": items[0], "value": items[1]}
 
     def func_def(self, items: list) -> dict:
-        print(items, items[1:])
-        return {"name": "func_def", "func_name": items[0], "commands": items[1:]}
+        return {"name": "func_def", "func_name": items[0], \
+                "arguments": items[1], "commands": items[2:]}
 
     def func_call(self, items: list) -> dict:
-        return {"name": "func_call", "func_name": items[0]}
+        return {"name": "func_call", "func_name": items[0], "arguments": items[1:]}
 
 def parse(code: str) -> dict:
     """Parses the given Logo code and returns its JSON representation.

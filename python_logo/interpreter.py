@@ -43,27 +43,38 @@ class Interpreter:
                 name = command["name"]
                 match name:
                     case "func_def":
-                        func_name = command["func_name"]
-                        func_commands = command["commands"]
-                        self._fuctions[func_name] = func_commands
+                        name = command["func_name"]
+                        arguments = command["arguments"]
+                        commands = command["commands"]
+                        self._fuctions[name] = {"arguments": {}, "commands": []}
+                        for argument in arguments:
+                            self._fuctions[name]["arguments"][argument] = ""
+                        self._fuctions[name]["commands"] = commands
                     case "func_call":
-                        func_name = command["func_name"]
+                        name = command["func_name"]
+                        arguments = command["arguments"]
+
+                        keys = list(self._fuctions[name]["arguments"])
+                        for i in range(len(arguments)):
+                            key_at_index = keys[i]
+                            self._fuctions[name]["arguments"][key_at_index] = \
+                                                    self._evaluate(arguments[i])
+
                         try:
-                            func_commands = self._fuctions[func_name]
+                            commands = self._fuctions[name]["commands"]
                             try:
-                                yield from self._interpret(func_commands)
+                                yield from self._interpret(commands)
                             except Exception as execution_err:
-                                raise InterpreterFunctionExecutionError (func_name, \
+                                raise InterpreterFunctionExecutionError (name, \
                                                 str(execution_err)) from execution_err
                         except KeyError as err:
-                            raise InterpreterUndefinedFunctionError(func_name) from err
+                            raise InterpreterUndefinedFunctionError(name) from err
                     case "make":
                         var_name = command["var_name"]
                         value = self._evaluate(command["value"])
                         self._variables[var_name] = value
                     case "repeat":
                         value = self._evaluate(command["value"])
-                        print(command)
                         for _ in range(int(value)):
                             yield from self._interpret(command["commands"])
                     case "if":
@@ -82,7 +93,7 @@ class Interpreter:
         except KeyError as err:
             raise InterpreterInvalidTreeError from err
 
-    def _evaluate(self, value: float | str | dict) -> float:  # noqa: C901, PLR0911
+    def _evaluate(self, value: float | str | dict) -> float:  # noqa: PLR0912, PLR0911, C901
         """Evaluates the value of the possible variable.
 
         Args:
@@ -97,6 +108,12 @@ class Interpreter:
 
         # Value is a variable.
         if isinstance(value, str):
+            # Try locally for a function.
+            for func_data in self._fuctions.values():
+                if value in func_data["arguments"]:
+                    return func_data["arguments"][value]
+
+            # Try globally.
             try:
                 return self._variables[value]
             except KeyError as err:
