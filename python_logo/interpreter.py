@@ -29,7 +29,7 @@ class Interpreter:
         except TypeError as err:
             raise InterpreterInvalidTreeError from err
 
-    def _interpret(self, commands: list) -> Generator[dict, None, None]:
+    def _interpret(self, commands: list) -> Generator[dict, None, None]: #noqa: PLR0912, C901
         """Generates and interprets commands.
 
         Args:

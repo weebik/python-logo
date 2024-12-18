@@ -91,7 +91,7 @@ class InterpreterUndefinedFunctionError(Exception):
             Ensure all functions are properly defined before use."
     )
 
-    def __init__(self, name: str, message: str = default_message) -> None:
+    def __init__(self, name: str, message: str = default_message) -> None: #noqa: D417
         """Initializes the error.
 
         Args:
