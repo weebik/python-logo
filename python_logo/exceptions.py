@@ -102,6 +102,30 @@ class InterpreterUndefinedFunctionError(Exception):
         super().__init__(self.message)
 
 
+class InterpreterInvalidFunctionArgumentsError(Exception):
+    """Raised when a function receives too many or too few arguments."""
+
+    default_message = (
+        "Invalid number of arguments for function '%s'. Expected %d, but got %d."
+    )
+
+    def __init__(
+        self, func_name: str, expected_args: int, received_args: int, message: str = None
+    ) -> None:
+        """Initializes the error.
+
+        Args:
+            func_name (str): The name of the function.
+            expected_args (int): The expected number of arguments.
+            received_args (int): The actual number of arguments provided.
+            message (str): Custom error message (optional).
+        """
+        if not message:
+            message = self.default_message % (func_name, expected_args, received_args)
+        self.message = message
+        super().__init__(self.message)
+
+
 class InterpreterFunctionExecutionError(Exception):
     """Raised when the execution of a function fails."""
 

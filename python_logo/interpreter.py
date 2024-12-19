@@ -6,6 +6,7 @@ from .exceptions import (
     InterpreterInvalidTreeError,
     InterpreterUnboundVariableError,
     InterpreterUndefinedFunctionError,
+    InterpreterInvalidFunctionArgumentsError,
 )
 
 
@@ -54,21 +55,31 @@ class Interpreter:
                         name = command["func_name"]
                         arguments = command["arguments"]
 
-                        keys = list(self._fuctions[name]["arguments"])
-                        for i in range(len(arguments)):
-                            key_at_index = keys[i]
-                            self._fuctions[name]["arguments"][key_at_index] = \
-                                                    self._evaluate(arguments[i])
+                        func_args_num = len(self._fuctions[name]["arguments"])
+                        input_args_num = len(arguments)
 
-                        try:
-                            commands = self._fuctions[name]["commands"]
+                        if func_args_num < input_args_num or func_args_num > input_args_num:
+                            raise InterpreterInvalidFunctionArgumentsError(
+                            func_name=name,
+                            expected_args=func_args_num,
+                            received_args=input_args_num
+                        )
+                        else:
+                            keys = list(self._fuctions[name]["arguments"])
+                            for i in range(len(arguments)):
+                                key_at_index = keys[i]
+                                self._fuctions[name]["arguments"][key_at_index] = \
+                                                        self._evaluate(arguments[i])
+
                             try:
-                                yield from self._interpret(commands)
-                            except Exception as execution_err:
-                                raise InterpreterFunctionExecutionError (name, \
-                                                str(execution_err)) from execution_err
-                        except KeyError as err:
-                            raise InterpreterUndefinedFunctionError(name) from err
+                                commands = self._fuctions[name]["commands"]
+                                try:
+                                    yield from self._interpret(commands)
+                                except Exception as execution_err:
+                                    raise InterpreterFunctionExecutionError (name, \
+                                                    str(execution_err)) from execution_err
+                            except KeyError as err:
+                                raise InterpreterUndefinedFunctionError(name) from err
                     case "make":
                         var_name = command["var_name"]
                         value = self._evaluate(command["value"])
