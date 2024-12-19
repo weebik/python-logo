@@ -83,6 +83,42 @@ class InterpreterUnboundVariableError(Exception):
         super().__init__(self.message)
 
 
+class InterpreterUndefinedFunctionError(Exception):
+    """Raised when an unbound function name is given to the interpreter."""
+
+    default_message = (
+        "The function '%s' is not defined. \
+            Ensure all functions are properly defined before use."
+    )
+
+    def __init__(self, name: str, message: str = default_message) -> None: #noqa: D417
+        """Initializes the error.
+
+        Args:
+            variable (str): The function name with unbound definition.
+            message (str): The error message.
+        """
+        self.message = message % name
+        super().__init__(self.message)
+
+
+class InterpreterFunctionExecutionError(Exception):
+    """Raised when the execution of a function fails."""
+
+    def __init__(self, func_name: str, reason: str) -> None:
+        """
+        Initializes the error.
+
+        Args:
+            func_name (str): The name of the function that failed.
+            reason (str): The reason or error message explaining the failure.
+        """
+        self.func_name = func_name
+        self.reason = reason
+        self.message = f"Execution of function '{func_name}' failed: {reason}"
+        super().__init__(self.message)
+
+
 class ParserInvalidCommandError(Exception):
     """Raised when an invalid command is given to the parser."""
 

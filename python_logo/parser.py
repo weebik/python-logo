@@ -7,10 +7,11 @@ _LOGO_GRAMMAR = """
 start: command+
 ?command: hideturtle | showturtle | penup | pendown
     | forward | backward | left | right
-    | repeat | if_command | make
+    | repeat | if_command | make | func_def | func_call
 
 number: NUMBER
 var_name: /[a-zA-Z_-]+/
+func_name: /[a-zA-Z_-]+/
 variable: ":" var_name
 
 ?expr: term
@@ -45,6 +46,10 @@ true: "true" | "True"
 false: "false" | "False"
 
 make: "make" var_name expr
+func_def: "to" func_name arguments command+ "end"
+func_call: func_name (expr)*
+
+arguments: (variable)*
 
 %import common.NUMBER
 %import common.WS
@@ -64,6 +69,10 @@ class _LogoJsonTransformer(Transformer):
 
     @v_args(inline=True)
     def var_name(self, value: str) -> str:
+        return str(value)
+
+    @v_args(inline=True)
+    def func_name(self, value: str) -> str:
         return str(value)
 
     @v_args(inline=True)
@@ -140,9 +149,18 @@ class _LogoJsonTransformer(Transformer):
     def false(self, items: list) -> str:  # noqa: ARG002
         return "false"
 
+    def arguments(self, items: list) -> str:
+        return items
+
     def make(self, items: list) -> dict:
         return {"name": "make", "var_name": items[0], "value": items[1]}
 
+    def func_def(self, items: list) -> dict:
+        return {"name": "func_def", "func_name": items[0], \
+                "arguments": items[1], "commands": items[2:]}
+
+    def func_call(self, items: list) -> dict:
+        return {"name": "func_call", "func_name": items[0], "arguments": items[1:]}
 
 def parse(code: str) -> dict:
     """Parses the given Logo code and returns its JSON representation.

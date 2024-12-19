@@ -1,9 +1,11 @@
 from collections.abc import Generator, Iterator
 
 from .exceptions import (
+    InterpreterFunctionExecutionError,
     InterpreterInvalidCommandError,
     InterpreterInvalidTreeError,
     InterpreterUnboundVariableError,
+    InterpreterUndefinedFunctionError,
 )
 
 
@@ -19,6 +21,7 @@ class Interpreter:
     def __init__(self, tree: dict) -> None:
         """Initializes the Interpreter instance."""
         self._variables = {}
+        self._fuctions = {}
         try:
             self._commands = tree["tokens"]
         except KeyError as err:
@@ -26,7 +29,7 @@ class Interpreter:
         except TypeError as err:
             raise InterpreterInvalidTreeError from err
 
-    def _interpret(self, commands: list) -> Generator[dict, None, None]:
+    def _interpret(self, commands: list) -> Generator[dict, None, None]: #noqa: PLR0912, C901
         """Generates and interprets commands.
 
         Args:
@@ -39,6 +42,33 @@ class Interpreter:
             for command in commands:
                 name = command["name"]
                 match name:
+                    case "func_def":
+                        name = command["func_name"]
+                        arguments = command["arguments"]
+                        commands = command["commands"]
+                        self._fuctions[name] = {"arguments": {}, "commands": []}
+                        for argument in arguments:
+                            self._fuctions[name]["arguments"][argument] = ""
+                        self._fuctions[name]["commands"] = commands
+                    case "func_call":
+                        name = command["func_name"]
+                        arguments = command["arguments"]
+
+                        keys = list(self._fuctions[name]["arguments"])
+                        for i in range(len(arguments)):
+                            key_at_index = keys[i]
+                            self._fuctions[name]["arguments"][key_at_index] = \
+                                                    self._evaluate(arguments[i])
+
+                        try:
+                            commands = self._fuctions[name]["commands"]
+                            try:
+                                yield from self._interpret(commands)
+                            except Exception as execution_err:
+                                raise InterpreterFunctionExecutionError (name, \
+                                                str(execution_err)) from execution_err
+                        except KeyError as err:
+                            raise InterpreterUndefinedFunctionError(name) from err
                     case "make":
                         var_name = command["var_name"]
                         value = self._evaluate(command["value"])
@@ -63,7 +93,7 @@ class Interpreter:
         except KeyError as err:
             raise InterpreterInvalidTreeError from err
 
-    def _evaluate(self, value: float | str | dict) -> float:  # noqa: C901, PLR0911
+    def _evaluate(self, value: float | str | dict) -> float:  # noqa: PLR0912, PLR0911, C901
         """Evaluates the value of the possible variable.
 
         Args:
@@ -78,6 +108,12 @@ class Interpreter:
 
         # Value is a variable.
         if isinstance(value, str):
+            # Try locally for a function.
+            for func_data in self._fuctions.values():
+                if value in func_data["arguments"]:
+                    return func_data["arguments"][value]
+
+            # Try globally.
             try:
                 return self._variables[value]
             except KeyError as err:
