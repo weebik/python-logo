@@ -110,7 +110,7 @@ class InterpreterInvalidFunctionArgumentsError(Exception):
     )
 
     def __init__(
-        self, func_name: str, expected_args: int, received_args: int, message: str = None
+        self, func_name: str, expected_args: int, received_args: int, message: str
     ) -> None:
         """Initializes the error.
 
