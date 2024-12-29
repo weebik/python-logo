@@ -131,8 +131,8 @@ class Interpreter:
 
     def _handle_if(self, command: dict) -> Generator[dict, None, None]:
         """Handles 'if' commands."""
-        condition = command["condition"]
-        if condition == "true":
+        condition = self._evaluate(command["condition"])
+        if condition:
             yield from self._interpret(command["commands"])
         else:
             yield from self._interpret(command["else_commands"])
@@ -192,6 +192,36 @@ class Interpreter:
                         )
                     case "neg":
                         return -self._evaluate(value["value"])
+                    case ">":
+                        return self._evaluate(value["left"]) > self._evaluate(
+                            value["right"]
+                        )
+                    case ">=":
+                        return self._evaluate(value["left"]) >= self._evaluate(
+                            value["right"]
+                        )
+                    case "<":
+                        return self._evaluate(value["left"]) < self._evaluate(
+                            value["right"]
+                        )
+                    case "<=":
+                        return self._evaluate(value["left"]) <= self._evaluate(
+                            value["right"]
+                        )
+                    case "=":
+                        return self._evaluate(value["left"]) == self._evaluate(
+                            value["right"]
+                        )
+                    case "<>":
+                        return self._evaluate(value["left"]) != self._evaluate(
+                            value["right"]
+                        )
+                    case "and":
+                        return all(self._evaluate(expr) for expr in value["list"])
+                    case "or":
+                        return any(self._evaluate(expr) for expr in value["list"])
+                    case "not":
+                        return not self._evaluate(value["expr"])
                     case _:
                         raise InterpreterInvalidCommandError
             except KeyError as err:

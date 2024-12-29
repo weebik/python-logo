@@ -101,6 +101,17 @@ def test_make():
     assert list(run(variables_input)) == variables_response
 
 
+def test_logic_expr():
+    logic_expr_input = """
+    make b 10
+    make c 50
+    if AND [:b<=20 OR [:c>10 :c<50+50] NOT [:b = 10]]
+        [fd :b]
+    else [fd :c]"""
+    logic_expr_responce = [{"name": "forward", "value": 50.0}]
+    assert list(run(logic_expr_input)) == logic_expr_responce
+
+
 def test_expr():
     expr_input = """
     forward 20 + 20 + 20

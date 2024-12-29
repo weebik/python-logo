@@ -14,6 +14,16 @@ var_name: /[a-zA-Z_-]+/
 func_name: /[a-zA-Z_-]+/
 variable: ":" var_name
 
+?logic_expr: compare_expr
+            | "AND" "[" (logic_expr)* "]" -> logic_and
+            | "OR" "[" (logic_expr)* "]" -> logic_or
+            | "NOT" "[" logic_expr "]" -> logic_not
+?compare_expr: expr ">" expr -> greater
+            | expr ">=" expr -> greater_equal
+            | expr "<" expr -> less
+            | expr "<=" expr -> less_equal
+            | expr "=" expr -> equal
+            | expr "<>" expr -> not_equal
 ?expr: term
     | expr "+" term -> add
     | expr "-" term -> sub
@@ -40,7 +50,8 @@ right: ("right" | "rt") expr
 
 repeat: "repeat" expr "[" command+ "]"
 
-if_command: "if" (true | false) "[" command+ "]" ((else_command) "[" command+ "]")?
+if_command: "if" (true | false | logic_expr) "[" command+ "]" \
+            ((else_command) "[" command+ "]")?
 else_command: "else"
 true: "true" | "True"
 false: "false" | "False"
@@ -96,6 +107,33 @@ class _LogoJsonTransformer(Transformer):
 
     def neg(self, items: list) -> dict:
         return {"op": "neg", "value": items[0]}
+
+    def greater(self, items: list) -> dict:
+        return {"op": ">", "left": items[0], "right": items[1]}
+
+    def greater_equal(self, items: list) -> dict:
+        return {"op": ">=", "left": items[0], "right": items[1]}
+
+    def less(self, items: list) -> dict:
+        return {"op": "<", "left": items[0], "right": items[1]}
+
+    def less_equal(self, items: list) -> dict:
+        return {"op": "<=", "left": items[0], "right": items[1]}
+
+    def equal(self, items: list) -> dict:
+        return {"op": "=", "left": items[0], "right": items[1]}
+
+    def not_equal(self, items: list) -> dict:
+        return {"op": "<>", "left": items[0], "right": items[1]}
+
+    def logic_and(self, items: list) -> dict:
+        return {"op": "and", "list": items[0:]}
+
+    def logic_or(self, items: list) -> dict:
+        return {"op": "or", "list": items[0:]}
+
+    def logic_not(self, items: list) -> dict:
+        return {"op": "not", "expr": items[0]}
 
     def hideturtle(self, items: list) -> dict:  # noqa: ARG002
         return {"name": "hideturtle"}
