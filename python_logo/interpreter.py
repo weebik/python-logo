@@ -159,6 +159,11 @@ class Interpreter:
                 if value in func_data["arguments"]:
                     return func_data["arguments"][value]
 
+            if value == "true":
+                return True
+            if value == "false":
+                return False
+
             # Then try global variables
             try:
                 return self._variables[value]

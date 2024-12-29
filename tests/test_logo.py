@@ -81,7 +81,7 @@ def test_repeat():
 
 
 def test_if():
-    if_true_input = "if true [forward 100]"
+    if_true_input = "if 10 > 5 [forward 100]"
     if_true_response = [{"name": "forward", "value": 100.0}]
     if_false_input = "if false [forward 100]"
     if_false_response = []
