@@ -81,7 +81,7 @@ def test_repeat():
 
 
 def test_if():
-    if_true_input = "if true [forward 100]"
+    if_true_input = "if 10 > 5 [forward 100]"
     if_true_response = [{"name": "forward", "value": 100.0}]
     if_false_input = "if false [forward 100]"
     if_false_response = []
@@ -99,6 +99,17 @@ def test_make():
     variables_input = "make test-var 100 forward :test-var"
     variables_response = [{"name": "forward", "value": 100.0}]
     assert list(run(variables_input)) == variables_response
+
+
+def test_logic_expr():
+    logic_expr_input = """
+    make b 10
+    make c 50
+    if AND [:b<=20 OR [:c>10 :c<50+50] NOT [:b = 10]]
+        [fd :b]
+    else [fd :c]"""
+    logic_expr_responce = [{"name": "forward", "value": 50.0}]
+    assert list(run(logic_expr_input)) == logic_expr_responce
 
 
 def test_expr():
