@@ -38,7 +38,6 @@
   logToConsole("Console initialized.");
 </script>
 
-
 <div class="m-5 h-100">
   <div class="textarea-container">
     <div
@@ -61,7 +60,7 @@
   <div class="console-container mt-3">
     <div class="console p-3">
       {#each logs as log}
-        <p> > {log}</p>
+        <p>> {log}</p>
       {/each}
     </div>
   </div>
