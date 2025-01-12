@@ -75,6 +75,7 @@
         <Icon name="reset" />
       </button>
     </div>
+
     <div class="d-flex p-0 gap-2">
       <button
         class="p-0 m-0"
@@ -114,20 +115,20 @@
     user-select: none;
     border: none;
     background-color: transparent;
-    color: #cae5be;
+    color: var(--acc1);
     transition:
       scale 0.2s,
       color 0.05s;
-  }
-  button:enabled:hover {
-    scale: 1.1;
-    color: #92da8c;
-  }
-  button:enabled:active {
-    scale: 1.05;
-    color: #92da8c;
-  }
-  button:disabled {
-    opacity: 0.5;
+    &:enabled:hover {
+      scale: 1.1;
+      color: var(--acc2);
+    }
+    &:enabled:active {
+      scale: 1.05;
+      color: var(--acc2);
+    }
+    &:disabled {
+      opacity: 0.5;
+    }
   }
 </style>
