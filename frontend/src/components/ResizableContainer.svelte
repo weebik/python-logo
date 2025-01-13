@@ -1,4 +1,6 @@
 <script lang="js">
+  import themeColor from "../storeThemes.js";
+
   let { children } = $props();
 
   let resizable;
@@ -23,7 +25,7 @@
     role="button"
     tabindex="0"
     onmousedown={initResize}
-    class="resizer"
+    class="resizer {$themeColor}"
   ></div>
   {@render children()}
 </div>
@@ -39,11 +41,16 @@
   .resizer {
     width: 10px;
     height: 100%;
-    background: #153246;
     position: absolute;
     right: 0;
     bottom: 0;
     cursor: col-resize;
     z-index: 1;
+    &.light {
+      background: var(--ter-pri-light);
+    }
+    &.dark {
+      background: var(--ter-pri-dark);
+    }
   }
 </style>

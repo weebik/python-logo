@@ -65,18 +65,18 @@
     border: none;
     cursor: pointer;
     background-color: transparent;
-    color: #cae5be;
+    color: var(--acc1);
     font-weight: bold;
     transition:
       scale 0.2s,
       color 0.05s;
-  }
-  button:hover {
-    scale: 1.1;
-    color: #92da8c;
-  }
-  button:active {
-    scale: 1.05;
-    color: #92da8c;
+    &:hover {
+      scale: 1.1;
+      color: var(--acc2);
+    }
+    &:active {
+      scale: 1.05;
+      color: var(--acc2);
+    }
   }
 </style>

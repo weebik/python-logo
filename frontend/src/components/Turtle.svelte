@@ -53,6 +53,7 @@
 </script>
 
 <script>
+  import themeColor from "../storeThemes.js";
   import { onMount } from "svelte";
   import { Turtle } from "better-turtle";
 
@@ -72,7 +73,8 @@
 <div
   class="right-container d-flex flex-col align-items-center justify-content-center p-5"
 >
-  <canvas bind:this={turtleCanvas} width="600" height="600"></canvas>
+  <canvas class={$themeColor} bind:this={turtleCanvas} width="600" height="600"
+  ></canvas>
 </div>
 
 <style>
@@ -84,8 +86,13 @@
     width: 100%;
     max-height: calc(90vh - 160px);
     max-width: calc(90vh - 160px);
-    background-color: #cae5be;
     border-radius: 10px;
     z-index: 0;
+    &.light {
+      background-color: var(--canvas-light);
+    }
+    &.dark {
+      background-color: var(--canvas-dark);
+    }
   }
 </style>

@@ -16,6 +16,8 @@
 </script>
 
 <script>
+  import themeColor from "../storeThemes.js";
+
   let textAreaEl;
   let numberLinesEl;
   let logs = $state([]);
@@ -41,15 +43,14 @@
 <div class="m-5 h-100">
   <div class="textarea-container">
     <div
-      class="line-numbers py-4"
+      class="line-numbers {$themeColor} py-4"
       role="presentation"
       bind:this={numberLinesEl}
     >
-      <pre>{getLineNumbers(code)}</pre>
+      <pre class={$themeColor}>{getLineNumbers(code)}</pre>
     </div>
     <textarea
-      class="form-control h-100 shadow-none py-4"
-      style="color: #cae5be;"
+      class="form-control {$themeColor} h-100 shadow-none py-4"
       placeholder="Type your code here..."
       spellcheck="false"
       onscroll={syncScroll}
@@ -58,7 +59,7 @@
     ></textarea>
   </div>
   <div class="console-container mt-3">
-    <div class="console p-3">
+    <div class="console {$themeColor} p-3">
       {#each logs as log}
         <p>> {log}</p>
       {/each}
@@ -68,7 +69,6 @@
 
 <style>
   .textarea-container {
-    background-color: #153246;
     height: 100%;
     max-height: calc(80vh - 140px);
     display: flex;
@@ -76,7 +76,6 @@
   }
 
   .console-container {
-    background-color: #0f2534;
     height: 100%;
     height: 10vh;
     display: flex;
@@ -84,7 +83,6 @@
   }
 
   .line-numbers {
-    background-color: #0f2534;
     border-top-left-radius: 1rem;
     border-bottom-left-radius: 1rem;
     width: 42px;
@@ -97,48 +95,82 @@
     &::-webkit-scrollbar {
       display: none;
     }
+    &.light {
+      background-color: var(--ter-sec-light);
+    }
+    &.dark {
+      background-color: var(--ter-sec-dark);
+    }
   }
 
   pre {
     line-height: 1.5;
-    color: #627d90;
     user-select: none;
     font-size: large;
-  }
-
-  textarea {
-    background-color: #153246;
-    border: none;
-    resize: none;
-    font-family: "Ubuntu Mono", monospace;
-    border-radius: 1rem;
-    font-size: large;
-    line-height: 1.5;
-  }
-
-  .console {
-    background-color: #0f2534;
-    border: none;
-    resize: none;
-    font-family: "Ubuntu Mono", monospace;
-    border-radius: 1rem;
-    font-size: large;
-    line-height: 1.5;
-    p {
-      margin: 0;
-      padding: 0;
-      color: #627d90;
-      font-size: small;
+    &.light {
+      color: var(--text-light);
+    }
+    &.dark {
+      color: var(--placeholder-dark);
     }
   }
 
-  textarea::placeholder {
-    user-select: none;
-    color: #627d90;
+  textarea {
+    border: none;
+    resize: none;
+    font-family: "Ubuntu Mono", monospace;
+    border-radius: 0;
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    font-size: large;
+    line-height: 1.5;
+    &:focus {
+      outline: none;
+    }
+    &::placeholder {
+      user-select: none;
+    }
+    &.light {
+      background-color: var(--ter-pri-light);
+      color: var(--text-light);
+      &::placeholder {
+        color: var(--placeholder-light);
+      }
+    }
+    &.dark {
+      background-color: var(--ter-pri-dark);
+      color: var(--text-dark);
+      &::placeholder {
+        color: var(--placeholder-dark);
+      }
+    }
   }
 
-  textarea:focus {
-    outline: none;
-    background-color: #153246;
+  .console {
+    width: 100%;
+    border: none;
+    resize: none;
+    font-family: "Ubuntu Mono", monospace;
+    border-radius: 1rem;
+    font-size: large;
+    line-height: 1.5;
+    overflow-y: auto;
+    p {
+      margin: 0;
+      padding: 0;
+      font-size: small;
+    }
+    &.light {
+      background-color: var(--ter-sec-light);
+      p {
+        color: var(--text-light);
+      }
+    }
+    &.dark {
+      background-color: var(--ter-sec-dark);
+      p {
+        color: var(--placeholder-dark);
+      }
+    }
   }
 </style>
