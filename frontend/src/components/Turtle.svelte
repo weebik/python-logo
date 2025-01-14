@@ -48,6 +48,9 @@
       case "showturtle":
         turtle.show();
         break;
+      case "setpencolor":
+        turtle.setColor(command.color);
+        break;
     }
   }
 </script>
