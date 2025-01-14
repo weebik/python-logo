@@ -68,12 +68,12 @@ class Interpreter:
                     case "hideturtle" | "showturtle" | "penup" | "pendown":
                         yield command
                     case "setpencolor":
-                        if command["color"] in self._colors:
-                            yield command
-                        raise InterpreterInvalidColorError(
-                            color=command["color"],
-                            supported_colors=self._colors,
-                        )
+                        if command["color"] not in self._colors:
+                            raise InterpreterInvalidColorError(
+                                color=command["color"],
+                                supported_colors=self._colors,
+                            )
+                        yield command
                     case _:
                         raise InterpreterInvalidCommandError
         except KeyError as err:
