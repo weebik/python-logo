@@ -26,9 +26,9 @@
   </div>
   <button class="theme-button ms-auto me-3" onclick={ThemeToggler}>
     {#if $themeColor === "dark"}
-      <Icon name="dark" />
-    {:else}
       <Icon name="light" />
+    {:else}
+      <Icon name="dark" />
     {/if}
   </button>
 </header>
