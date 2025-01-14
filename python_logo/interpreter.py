@@ -2,6 +2,7 @@ from collections.abc import Generator, Iterator
 
 from .exceptions import (
     InterpreterFunctionExecutionError,
+    InterpreterInvalidColorError,
     InterpreterInvalidCommandError,
     InterpreterInvalidFunctionArgumentsError,
     InterpreterInvalidTreeError,
@@ -23,6 +24,7 @@ class Interpreter:
         """Initializes the Interpreter instance."""
         self._variables = {}
         self._fuctions = {}
+        self._colors = ["white", "black", "red", "green", "blue", "cyan"]
         try:
             self._commands = tree["tokens"]
         except KeyError as err:
@@ -38,7 +40,7 @@ class Interpreter:
         """
         return self._interpret(self._commands)
 
-    def _interpret(self, commands: list) -> Generator[dict, None, None]:
+    def _interpret(self, commands: list) -> Generator[dict, None, None]: # noqa: C901
         """Generates and interprets commands.
 
         Args:
@@ -65,6 +67,13 @@ class Interpreter:
                         yield from self._handle_movement(command)
                     case "hideturtle" | "showturtle" | "penup" | "pendown":
                         yield command
+                    case "setpencolor":
+                        if command["color"] in self._colors:
+                            yield command
+                        raise InterpreterInvalidColorError(
+                            color=command["color"],
+                            supported_colors=self._colors,
+                        )
                     case _:
                         raise InterpreterInvalidCommandError
         except KeyError as err:

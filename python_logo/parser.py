@@ -6,12 +6,14 @@ from .exceptions import ParserInvalidCommandError, ParserUnexpectedTokenError
 _LOGO_GRAMMAR = """
 start: command+
 ?command: hideturtle | showturtle | penup | pendown
+    | setpencolor
     | forward | backward | left | right
     | repeat | if_command | make | func_def | func_call
 
 number: NUMBER
 var_name: /[a-zA-Z_-]+/
 func_name: /[a-zA-Z_-]+/
+color: /[a-zA-Z_-]+/
 variable: ":" var_name
 
 ?logic_expr: compare_expr
@@ -42,6 +44,7 @@ hideturtle: "hideturtle" | "ht"
 showturtle: "showturtle" | "st"
 penup: "penup" | "pu"
 pendown: "pendown" | "pd"
+setpencolor: "setpencolor" color
 
 forward: ("forward" | "fd") expr
 backward: ("backward" | "bk") expr
@@ -84,6 +87,10 @@ class _LogoJsonTransformer(Transformer):
 
     @v_args(inline=True)
     def func_name(self, value: str) -> str:
+        return str(value)
+
+    @v_args(inline=True)
+    def color(self, value: str) -> str:
         return str(value)
 
     @v_args(inline=True)
@@ -146,6 +153,9 @@ class _LogoJsonTransformer(Transformer):
 
     def pendown(self, items: list) -> dict:  # noqa: ARG002
         return {"name": "pendown"}
+
+    def setpencolor(self, items: list) -> dict:
+        return {"name": "setpencolor", "color": items[0]}
 
     def forward(self, items: list) -> dict:
         return {"name": "forward", "value": items[0]}

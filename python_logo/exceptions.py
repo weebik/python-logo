@@ -143,6 +143,32 @@ class InterpreterFunctionExecutionError(Exception):
         super().__init__(self.message)
 
 
+class InterpreterInvalidColorError(Exception):
+    """Raised when an invalid color is specified in the interpreter."""
+
+    default_message = (
+        "Invalid color specified. \
+        Please make sure to use a color from the supported list."
+    )
+
+    def __init__(self, color: str, supported_colors: list[str]) -> None:
+        """Initializes the error.
+
+        Args:
+            color (str): The invalid color provided.
+            supported_colors (list[str]): A list of supported colors.
+            message (str): Custom error message (optional).
+        """
+        message = (
+                f"'{color}' is not a valid color. Supported colors are: \
+                    {', '.join(supported_colors)}."
+            )
+        self.color = color
+        self.supported_colors = supported_colors
+        self.message = message
+        super().__init__(self.message)
+
+
 class ParserInvalidCommandError(Exception):
     """Raised when an invalid command is given to the parser."""
 
