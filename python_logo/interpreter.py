@@ -40,7 +40,7 @@ class Interpreter:
         """
         return self._interpret(self._commands)
 
-    def _interpret(self, commands: list) -> Generator[dict, None, None]: # noqa: C901
+    def _interpret(self, commands: list) -> Generator[dict, None, None]: # noqa: C901, PLR0912
         """Generates and interprets commands.
 
         Args:
@@ -68,12 +68,11 @@ class Interpreter:
                     case "hideturtle" | "showturtle" | "penup" | "pendown":
                         yield command
                     case "setpencolor":
-                        if command["color"] not in self._colors:
-                            raise InterpreterInvalidColorError(
-                                color=command["color"],
-                                supported_colors=self._colors,
-                            )
-                        yield command
+                        yield from self._handle_setpencolor(command)
+                    case "setpensize":
+                        yield from self._handle_setpensize(command)
+                    case "print":
+                        yield from self._handle_print(command)
                     case _:
                         raise InterpreterInvalidCommandError
         except KeyError as err:
@@ -150,6 +149,23 @@ class Interpreter:
         """Handles movement commands like forward, backward, left, right."""
         command["value"] = self._evaluate(command["value"])
         yield command
+
+    def _handle_setpencolor(self, command: dict) -> Generator[dict, None, None]:
+        if command["color"] not in self._colors:
+            raise InterpreterInvalidColorError(
+                color=command["color"],
+                supported_colors=self._colors,
+            )
+        yield command
+
+    def _handle_setpensize(self, command: dict) -> Generator[dict, None, None]:
+        command["value"] = self._evaluate(command["value"])
+        yield command
+
+    def _handle_print(self, command: dict) -> Generator[dict, None, None]:
+        command["value"] = str(self._evaluate(command["value"]))
+        if command["value"]:
+            yield command
 
     # --------------------------------------------------------------------------
     # Expression evaluation

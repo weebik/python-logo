@@ -6,7 +6,7 @@ from .exceptions import ParserInvalidCommandError, ParserUnexpectedTokenError
 _LOGO_GRAMMAR = """
 start: command+
 ?command: hideturtle | showturtle | penup | pendown
-    | setpencolor
+    | setpencolor | setpensize | print
     | forward | backward | left | right
     | repeat | if_command | make | func_def | func_call
 
@@ -20,7 +20,8 @@ variable: ":" var_name
             | "AND" "[" (logic_expr)* "]" -> logic_and
             | "OR" "[" (logic_expr)* "]" -> logic_or
             | "NOT" "[" logic_expr "]" -> logic_not
-?compare_expr: expr ">" expr -> greater
+?compare_expr: expr
+            | expr ">" expr -> greater
             | expr ">=" expr -> greater_equal
             | expr "<" expr -> less
             | expr "<=" expr -> less_equal
@@ -45,6 +46,8 @@ showturtle: "showturtle" | "st"
 penup: "penup" | "pu"
 pendown: "pendown" | "pd"
 setpencolor: "setpencolor" color
+setpensize: "setpensize" expr
+print: "print" "[" logic_expr "]"
 
 forward: ("forward" | "fd") expr
 backward: ("backward" | "bk") expr
@@ -59,7 +62,7 @@ else_command: "else"
 true: "true" | "True"
 false: "false" | "False"
 
-make: "make" var_name expr
+make: "make" var_name logic_expr
 func_def: "to" func_name arguments command+ "end"
 func_call: func_name (expr)*
 
@@ -156,6 +159,12 @@ class _LogoJsonTransformer(Transformer):
 
     def setpencolor(self, items: list) -> dict:
         return {"name": "setpencolor", "color": items[0]}
+
+    def setpensize(self, items: list) -> dict:
+        return {"name": "setpensize", "value": items[0]}
+
+    def print(self, items: list) -> dict:
+        return {"name": "print", "value": items[0]}
 
     def forward(self, items: list) -> dict:
         return {"name": "forward", "value": items[0]}
