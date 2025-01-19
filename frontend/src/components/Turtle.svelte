@@ -1,5 +1,6 @@
 <script module>
   import { emitRun, emitStop } from "./Socket.svelte";
+  import { logToConsole } from "./Textarea.svelte";
 
   let turtle;
 
@@ -13,7 +14,7 @@
 
   export function resetTurtle() {
     turtle.goto(0, 0);
-    turtle.setColor("black");
+    turtle.setColor("white");
     turtle.setAngle(0);
     turtle.putPenDown();
     turtle.show();
@@ -51,6 +52,13 @@
       case "setpencolor":
         turtle.setColor(command.color);
         break;
+      case "setpensize":
+        turtle.setWidth(command.value);
+        break;
+      case "print":
+        logToConsole(command.value);
+        console.log(command.value);
+        break;
     }
   }
 </script>
@@ -62,14 +70,43 @@
 
   let turtleCanvas;
 
+  const turtleVertices = [
+    { x: -5, y: 9 },
+    { x: -3, y: 10 },
+    { x: -2, y: 13 },
+    { x: 0, y: 14 },
+    { x: 2, y: 13 },
+    { x: 3, y: 10 },
+    { x: 5, y: 9 },
+    { x: 10, y: 10 },
+    { x: 8, y: 3 },
+    { x: 9, y: 0 },
+    { x: 8, y: -3 },
+    { x: 10, y: -9 },
+    { x: 5, y: -8 },
+    { x: 3, y: -9 },
+    { x: -3, y: -9 },
+    { x: -5, y: -8 },
+    { x: -10, y: -9 },
+    { x: -8, y: -3 },
+    { x: -9, y: 0 },
+    { x: -8, y: 3 },
+    { x: -10, y: 10 },
+    { x: -5, y: 9 },
+  ];
+
   let turtleOptions = {
-    defaultColor: "black",
+    defaultColor: "white",
+    shape: turtleVertices,
   };
 
   onMount(() => {
     const ctx = turtleCanvas.getContext("2d", { willReadFrequently: true });
     turtle = new Turtle(ctx, turtleOptions);
     turtle.draw();
+    const turtleCanvasId = document.getElementById("turtle");
+    turtleCanvasId.style.border = "none";
+    turtleCanvasId.style.outline = "none";
   });
 </script>
 
