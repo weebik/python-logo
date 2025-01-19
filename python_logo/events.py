@@ -9,6 +9,7 @@ from .exceptions import (
     InterpreterInvalidCommandError,
     InterpreterInvalidTreeError,
     InterpreterUnboundVariableError,
+    InterpreterUnboundVariableListError,
     ParserInvalidCommandError,
     ParserUnexpectedTokenError,
 )
@@ -49,6 +50,7 @@ class _Worker:
             InterpreterInvalidCommandError,
             InterpreterInvalidTreeError,
             InterpreterUnboundVariableError,
+            InterpreterUnboundVariableListError,
             ParserInvalidCommandError,
             ParserUnexpectedTokenError,
         ) as err:

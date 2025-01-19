@@ -83,15 +83,32 @@ class InterpreterUnboundVariableError(Exception):
         super().__init__(self.message)
 
 
+class InterpreterUnboundVariableListError(Exception):
+    """Raised when an unbound variable
+    representing a list is given to the interpreter.
+    """
+
+    default_message = """Unbound List Variable: '%s'.
+    Make sure your program binds all of its variables."""
+
+    def __init__(self, variable: str, message: str = default_message) -> None:
+        """Initializes the error.
+
+        Args:
+            variable (str): The variable representing a list with unbound value.
+            message (str): The error message.
+        """
+        self.message = message % variable
+        super().__init__(self.message)
+
+
 class InterpreterUndefinedFunctionError(Exception):
     """Raised when an unbound function name is given to the interpreter."""
 
-    default_message = (
-        "The function '%s' is not defined. \
+    default_message = "The function '%s' is not defined. \
             Ensure all functions are properly defined before use."
-    )
 
-    def __init__(self, name: str, message: str = default_message) -> None: #noqa: D417
+    def __init__(self, name: str, message: str = default_message) -> None:  # noqa: D417
         """Initializes the error.
 
         Args:
@@ -146,10 +163,8 @@ class InterpreterFunctionExecutionError(Exception):
 class InterpreterInvalidColorError(Exception):
     """Raised when an invalid color is specified in the interpreter."""
 
-    default_message = (
-        "Invalid color specified. \
+    default_message = "Invalid color specified. \
         Please make sure to use a color from the supported list."
-    )
 
     def __init__(self, color: str, supported_colors: list[str]) -> None:
         """Initializes the error.
@@ -159,10 +174,8 @@ class InterpreterInvalidColorError(Exception):
             supported_colors (list[str]): A list of supported colors.
             message (str): Custom error message (optional).
         """
-        message = (
-                f"'{color}' is not a valid color. Supported colors are: \
+        message = f"'{color}' is not a valid color. Supported colors are: \
                     {', '.join(supported_colors)}."
-            )
         self.color = color
         self.supported_colors = supported_colors
         self.message = message
