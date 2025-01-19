@@ -7,6 +7,7 @@ from .exceptions import (
     InterpreterInvalidFunctionArgumentsError,
     InterpreterInvalidTreeError,
     InterpreterUnboundVariableError,
+    InterpreterUnboundVariableListError,
     InterpreterUndefinedFunctionError,
 )
 
@@ -24,6 +25,7 @@ class Interpreter:
         """Initializes the Interpreter instance."""
         self._variables = {}
         self._fuctions = {}
+        self._lists = {}
         self._colors = ["white", "black", "red", "green", "blue", "cyan"]
         try:
             self._commands = tree["tokens"]
@@ -40,7 +42,7 @@ class Interpreter:
         """
         return self._interpret(self._commands)
 
-    def _interpret(self, commands: list) -> Generator[dict, None, None]: # noqa: C901, PLR0912
+    def _interpret(self, commands: list) -> Generator[dict, None, None]:  # noqa: C901, PLR0912
         """Generates and interprets commands.
 
         Args:
@@ -59,6 +61,10 @@ class Interpreter:
                         yield from self._handle_func_call(command)
                     case "make":
                         self._handle_make(command)
+                    case "list_make":
+                        self._handle_list_make(command)
+                    case "list":
+                        self._handle_list(command)
                     case "repeat":
                         yield from self._handle_repeat(command)
                     case "if":
@@ -106,7 +112,7 @@ class Interpreter:
                 raise InterpreterInvalidFunctionArgumentsError(
                     func_name=func_name,
                     expected_args=func_args_num,
-                    received_args=input_args_num
+                    received_args=input_args_num,
                 )
 
             keys = list(self._fuctions[func_name]["arguments"])
@@ -119,8 +125,9 @@ class Interpreter:
             try:
                 yield from self._interpret(commands)
             except Exception as execution_err:
-                raise InterpreterFunctionExecutionError(func_name,
-                                            str(execution_err)) from execution_err
+                raise InterpreterFunctionExecutionError(
+                    func_name, str(execution_err)
+                ) from execution_err
 
         except KeyError as err:
             raise InterpreterUndefinedFunctionError(func_name) from err
@@ -130,6 +137,16 @@ class Interpreter:
         var_name = command["var_name"]
         value = self._evaluate(command["value"])
         self._variables[var_name] = value
+
+    def _handle_list_make(self, command: dict) -> Generator[dict, None, None]:
+        """Handles 'list_make' commands (list creation)."""
+        list_name = command["list_name"]
+        value = command["list"]
+        if value == "empty":
+            value = []
+        for i in range(len(value)):
+            value[i] = self._evaluate(value[i])
+        self._lists[list_name] = value
 
     def _handle_repeat(self, command: dict) -> Generator[dict, None, None]:
         """Handles 'repeat' commands."""
@@ -167,11 +184,39 @@ class Interpreter:
         if command["value"]:
             yield command
 
+    def _handle_list(self, command: dict) -> Generator[dict, None, None]:
+        try:
+            if command["list_name"] in self._lists:
+                xs = self._lists[command["list_name"]]
+            match command["function"]:
+                case "empty":
+                    return bool(not xs)
+                case "len":
+                    return len(xs)
+                case "get":
+                    return xs[int(command["index"])]
+                case "set":
+                    xs[int(command["index"])] = self._evaluate(command["value"])
+                    self._lists[command["list_name"]] = xs
+                case "insert":
+                    xs.insert(int(command["index"]), self._evaluate(command["value"]))
+                    self._lists[command["list_name"]] = xs
+                case "remove":
+                    xs.pop(int(command["index"]))
+                    self._lists[command["list_name"]] = xs
+                case "remove_value":
+                    xs.remove(self._evaluate(command["value"]))
+                    self._lists[command["list_name"]] = xs
+                case _:
+                    raise InterpreterInvalidCommandError
+        except KeyError as err:
+            raise InterpreterUnboundVariableListError from err
+
     # --------------------------------------------------------------------------
     # Expression evaluation
     # --------------------------------------------------------------------------
 
-    def _evaluate(self, value: float | str | dict) -> float: # noqa: PLR0912, PLR0911, C901
+    def _evaluate(self, value: float | str | dict) -> float:  # noqa: PLR0912, PLR0911, C901
         """Evaluates the value of the possible variable or expression."""
         # Value is a float
         if isinstance(value, float):

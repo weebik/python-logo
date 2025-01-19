@@ -8,7 +8,7 @@ start: command+
 ?command: hideturtle | showturtle | penup | pendown
     | setpencolor | setpensize | print
     | forward | backward | left | right
-    | repeat | if_command | make | func_def | func_call
+    | repeat | if_command | make | list_operations | func_def | func_call
 
 number: NUMBER
 var_name: /[a-zA-Z_-]+/
@@ -41,6 +41,9 @@ variable: ":" var_name
 ?atom: number
     | variable
 
+?list_operations : list_make | list_empty | list_len | list_set
+                | list_get | list_insert | list_remove | list_remove_value
+
 hideturtle: "hideturtle" | "ht"
 showturtle: "showturtle" | "st"
 penup: "penup" | "pu"
@@ -63,6 +66,14 @@ true: "true" | "True"
 false: "false" | "False"
 
 make: "make" var_name logic_expr
+list_make: "list" var_name "[" logic_expr* "]"
+list_set: "set" variable number expr
+list_get: "get" variable number
+list_insert: "insert" variable number expr
+list_remove: "remove" variable number
+list_remove_value: "remove_value" variable logic_expr
+list_len: "len" variable
+list_empty: "empty" variable
 func_def: "to" func_name arguments command+ "end"
 func_call: func_name (expr)*
 
@@ -212,12 +223,69 @@ class _LogoJsonTransformer(Transformer):
     def make(self, items: list) -> dict:
         return {"name": "make", "var_name": items[0], "value": items[1]}
 
+    def list_make(self, items: list) -> dict:
+        xs = "empty" if len(items) <= 1 else items[1:]
+        return {"name": "list_make", "list_name": items[0], "list": xs}
+
+    def list_len(self, items: list) -> dict:
+        return {"name": "list", "function": "len", "list_name": items[0]}
+
+    def list_empty(self, items: list) -> dict:
+        return {"name": "list", "function": "empty", "list_name": items[0]}
+
+    def list_get(self, items: list) -> dict:
+        return {
+            "name": "list",
+            "function": "get",
+            "list_name": items[0],
+            "index": items[1],
+        }
+
+    def list_set(self, items: list) -> dict:
+        return {
+            "name": "list",
+            "function": "set",
+            "list_name": items[0],
+            "index": items[1],
+            "value": items[2],
+        }
+
+    def list_insert(self, items: list) -> dict:
+        return {
+            "name": "list",
+            "function": "insert",
+            "list_name": items[0],
+            "index": items[1],
+            "value": items[2],
+        }
+
+    def list_remove(self, items: list) -> dict:
+        return {
+            "name": "list",
+            "function": "remove",
+            "list_name": items[0],
+            "index": items[1],
+        }
+
+    def list_remove_value(self, items: list) -> dict:
+        return {
+            "name": "list",
+            "function": "remove_value",
+            "list_name": items[0],
+            "value": items[1],
+        }
+
     def func_def(self, items: list) -> dict:
-        return {"name": "func_def", "func_name": items[0], \
-                "arguments": items[1], "commands": items[2:]}
+        return {
+            "name": "func_def",
+            "func_name": items[0],
+            "arguments": items[1],
+            "commands": items[2:],
+        }
 
     def func_call(self, items: list) -> dict:
         return {"name": "func_call", "func_name": items[0], "arguments": items[1:]}
+
 
 def parse(code: str) -> dict:
     """Parses the given Logo code and returns its JSON representation.
