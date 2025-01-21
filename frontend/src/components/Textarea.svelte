@@ -1,6 +1,8 @@
 <script module>
   let code = $state("");
   let console = $state("");
+  let logs = $state([]);
+  let consoleContainerEl;
 
   export function getCode() {
     return code;
@@ -13,6 +15,22 @@
   export function setConsole(newConsole) {
     console = newConsole;
   }
+
+  function scrollConsoleToBottom() {
+    if (consoleContainerEl) {
+      consoleContainerEl.scrollTop = consoleContainerEl.scrollHeight;
+    }
+  }
+
+  export function logToConsole(message) {
+    logs = [...logs, message];
+
+    if (logs.length > 1000) {
+      logs = logs.slice(-1000);
+    }
+
+    setTimeout(() => scrollConsoleToBottom(), 0);
+  }
 </script>
 
 <script>
@@ -20,7 +38,6 @@
 
   let textAreaEl;
   let numberLinesEl;
-  let logs = $state([]);
 
   function getLineNumbers(content) {
     const lines = content.split("\n").length;
@@ -31,10 +48,6 @@
     if (numberLinesEl && textAreaEl) {
       numberLinesEl.scrollTop = textAreaEl.scrollTop;
     }
-  }
-
-  function logToConsole(message) {
-    logs = [...logs, message];
   }
 
   logToConsole("Console initialized.");
@@ -59,7 +72,7 @@
     ></textarea>
   </div>
   <div class="console-container mt-3">
-    <div class="console {$themeColor} p-3">
+    <div class="console {$themeColor} p-3" bind:this={consoleContainerEl}>
       {#each logs as log}
         <p>> {log}</p>
       {/each}
