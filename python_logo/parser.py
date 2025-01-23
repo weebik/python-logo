@@ -40,6 +40,7 @@ variable: ":" var_name
     | "(" expr ")"
 ?atom: number
     | variable
+    | list_get | list_len | list_empty
 
 ?list_operations : list_make | list_empty | list_len | list_set
                 | list_get | list_insert | list_remove | list_remove_value

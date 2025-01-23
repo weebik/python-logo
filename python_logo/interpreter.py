@@ -242,6 +242,8 @@ class Interpreter:
 
         # Value is an expression (dict)
         if isinstance(value, dict):
+            if value["name"] == "list":
+                return self._handle_list(value)
             try:
                 op = value["op"]
                 match op:
