@@ -32,6 +32,7 @@
 
 <style>
   .left-container {
+    max-height: calc(100vh - 80px);
     min-width: 500px;
     position: relative;
     width: 50%;
@@ -44,7 +45,7 @@
     position: absolute;
     right: 0;
     bottom: 0;
-    cursor: col-resize;
+    cursor: ew-resize;
     z-index: 1;
     &.light {
       background: var(--ter-pri-light);
