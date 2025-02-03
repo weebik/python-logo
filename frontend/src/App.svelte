@@ -2,7 +2,7 @@
   import ButtonBar from "./components/ButtonBar.svelte";
   import Header from "./components/Header.svelte";
   import InfoBar from "./components/InfoBar.svelte";
-  import ResizableContainer from "./components/ResizableContainer.svelte";
+  import ResizableHorizontal from "./components/ResizableHorizontal.svelte";
   import Socket from "./components/Socket.svelte";
   import Textarea from "./components/Textarea.svelte";
   import Toast from "./components/Toast.svelte";
@@ -18,10 +18,10 @@
   >
     <div class="row flex-grow-1">
       <div class="d-flex justify-content-center align-items-streach">
-        <ResizableContainer>
+        <ResizableHorizontal>
           <ButtonBar />
           <Textarea />
-        </ResizableContainer>
+        </ResizableHorizontal>
         <div
           class="right-container w-100 d-flex flex-column align-items-center justify-content-center overflow-hidden"
         >

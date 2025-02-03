@@ -1,8 +1,12 @@
 <script module>
+  import themeColor from "../storeThemes.js";
+
   let code = $state("");
-  let console = $state("");
   let logs = $state([]);
   let consoleContainerEl;
+  let textAreaHeight = $state(70);
+  let consoleHeight = $state(30);
+  let isResizing = false;
 
   export function getCode() {
     return code;
@@ -12,8 +16,20 @@
     code = newCode;
   }
 
-  export function setConsole(newConsole) {
-    console = newConsole;
+  export function logToConsole(message) {
+    logs = [...logs, message];
+
+    if (logs.length > 25) {
+      logs = logs.slice(-25);
+    }
+
+    setTimeout(() => scrollConsoleToBottom(), 0);
+  }
+
+  function clearConsole() {
+    logs.length = 0;
+    logs = [];
+    logToConsole("Console cleared!");
   }
 
   function scrollConsoleToBottom() {
@@ -22,19 +38,29 @@
     }
   }
 
-  export function logToConsole(message) {
-    logs = [...logs, message];
-
-    if (logs.length > 1000) {
-      logs = logs.slice(-1000);
-    }
-
-    setTimeout(() => scrollConsoleToBottom(), 0);
+  function startResizing(event) {
+    isResizing = true;
+    document.addEventListener("mousemove", resize, { passive: true });
+    document.addEventListener("mouseup", stopResizing);
   }
-</script>
 
-<script>
-  import themeColor from "../storeThemes.js";
+  function resize(event) {
+    if (!isResizing) return;
+    const containerHeight =
+      document.querySelector(".container-fluid").clientHeight;
+    const newHeight = Math.max(
+      30,
+      Math.min(75, (event.clientY / containerHeight) * 100),
+    );
+    textAreaHeight = newHeight;
+    consoleHeight = 100 - newHeight;
+  }
+
+  function stopResizing() {
+    isResizing = false;
+    document.removeEventListener("mousemove", resize);
+    document.removeEventListener("mouseup", stopResizing);
+  }
 
   let textAreaEl;
   let numberLinesEl;
@@ -53,8 +79,8 @@
   logToConsole("Console initialized.");
 </script>
 
-<div class="m-5 h-100">
-  <div class="textarea-container">
+<div class="container-fluid d-flex flex-column h-100 m-0 p-0">
+  <div class="textarea-container p-5" style="height: {textAreaHeight}%">
     <div
       class="line-numbers {$themeColor} py-4"
       role="presentation"
@@ -71,8 +97,20 @@
       bind:value={code}
     ></textarea>
   </div>
-  <div class="console-container mt-3">
-    <div class="console {$themeColor} p-3" bind:this={consoleContainerEl}>
+  <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+  <div
+    class="resizer {$themeColor}"
+    onmousedown={startResizing}
+    role="separator"
+    aria-orientation="vertical"
+  ></div>
+  <div class="console-container p-5" style="height: {consoleHeight}%">
+    <div class="console-btns {$themeColor} d-flex justify-content-end">
+      <button class="clear-btn {$themeColor}" onclick={clearConsole}
+        >clear</button
+      >
+    </div>
+    <div class="console px-3 {$themeColor}" bind:this={consoleContainerEl}>
       {#each logs as log}
         <p>> {log}</p>
       {/each}
@@ -81,17 +119,24 @@
 </div>
 
 <style>
+  .resizer {
+    height: 10px;
+    width: 100%;
+    cursor: ns-resize;
+    &.light {
+      background: var(--ter-pri-light);
+    }
+    &.dark {
+      background: var(--ter-pri-dark);
+    }
+  }
+
   .textarea-container {
-    height: 100%;
-    max-height: calc(80vh - 140px);
     display: flex;
     border-radius: 1rem;
   }
 
   .console-container {
-    height: 100%;
-    height: 10vh;
-    display: flex;
     border-radius: 1rem;
   }
 
@@ -160,11 +205,15 @@
   }
 
   .console {
+    display: flex;
+    flex-direction: column;
     width: 100%;
+    height: 100%;
     border: none;
     resize: none;
     font-family: "Ubuntu Mono", monospace;
-    border-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
     font-size: large;
     line-height: 1.5;
     overflow-y: auto;
@@ -184,6 +233,38 @@
       p {
         color: var(--placeholder-dark);
       }
+    }
+  }
+  .console-btns {
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    &.light {
+      background-color: var(--ter-sec-light);
+    }
+    &.dark {
+      background-color: var(--ter-sec-dark);
+    }
+  }
+  .clear-btn {
+    position: relative;
+    width: 50px;
+    font-size: small;
+    border: none;
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+    border-top-left-radius: 0.5rem;
+    cursor: pointer;
+    &:focus {
+      outline: none;
+    }
+    &.light {
+      background-color: var(--ter-pri-light);
+      color: var(--text-light);
+    }
+    &.dark {
+      background-color: var(--ter-pri-light);
+      color: var(--text-light);
     }
   }
 </style>
