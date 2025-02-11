@@ -17,6 +17,14 @@ repos:
         additional_dependencies:
           - prettier
           - prettier-plugin-svelte
+  - repo: https://github.com/thclark/pre-commit-sphinx
+    rev: 0.0.1
+    hooks:
+      - id: build-docs
+        args: ['--cache-dir', 'docs/build/doctrees', '--html-dir', 'docs/build/html', '--source-dir', 'docs/source']
+        language_version: python3
+        additional_dependencies:
+          - furo
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v3.6.0
     hooks:

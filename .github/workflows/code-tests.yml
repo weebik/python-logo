@@ -1,36 +1,53 @@
 name: Code quality tests
+
 on: [push, pull_request]
+
 jobs:
   code-tests:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
       - name: Install frontend
-        run: npm install --prefix frontend
+        run: |
+          npm install --prefix frontend
+
       - name: Build frontend
-        run: npm run build --prefix frontend
+        run: |
+          npm run build --prefix frontend
+
       - name: Install poetry
         uses: abatilo/actions-poetry@v2
+
       - name: Install the project
-        run: poetry install
+        run: |
+          poetry install
+
       - name: Check ruff
-        run: poetry run ruff check --no-fix
+        run: |
+          poetry run ruff check --no-fix
+
       - name: Check prettier
         uses: creyD/prettier_action@v4.3
         with:
           prettier_plugins: "prettier-plugin-svelte"
           prettier_options: "--check frontend/**/*.{js,html,css,json,svelte}"
           dry: True
+
       - name: Run pytest
-        run: poetry run pytest -v
+        run: |
+          poetry run pytest -v
