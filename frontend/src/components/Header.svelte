@@ -3,6 +3,9 @@
   import logo from "../assets/logo.png";
   import Icon from "./Icon.svelte";
 
+  /**
+   * Handles toggling between light and dark themes
+   */
   function ThemeToggler(e) {
     if ($themeColor === "dark") {
       storeThemes.update((themeColor) => "light");

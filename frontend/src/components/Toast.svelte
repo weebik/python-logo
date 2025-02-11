@@ -2,9 +2,14 @@
   import { toast } from "@zerodevx/svelte-toast";
   import Icon from "./Icon.svelte";
 
+  /**
+   * Display a success toast
+   * @param message
+   */
   export function toastSuccess(message) {
     toast.push({
       component: {
+        // @ts-ignore
         src: Icon,
         props: { name: "check", style: "color: white", message: message },
       },
@@ -19,9 +24,14 @@
     });
   }
 
+  /**
+   * Display an error toast
+   * @param message
+   */
   export function toastError(message) {
     toast.push({
       component: {
+        // @ts-ignore
         src: Icon,
         props: { name: "alert", style: "color: white", message: message },
       },

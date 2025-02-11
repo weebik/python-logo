@@ -8,14 +8,23 @@
 
   let connected = false;
 
+  /**
+   * Sends server the code to run
+   */
   export function emitRun(code) {
     socket.emit("run", code);
   }
 
+  /**
+   * Sends server a stop signal
+   */
   export function emitStop() {
     socket.emit("stop");
   }
 
+  /**
+   * Socket event listeners
+   */
   socket.on("connect", () => {
     if (!connected) {
       console.log("Connected to the server.");
@@ -26,15 +35,24 @@
     }
   });
 
+  /**
+   * Handle connection error
+   */
   socket.on("connect_error", () => {
     toastError("Cannot connect to the server.");
   });
 
+  /**
+   * Handle connection closed
+   */
   socket.on("disconnect", () => {
     console.error("Server connection closed.");
     toastError("Server connection closed.");
   });
 
+  /**
+   * Handle task status
+   */
   socket.on("task", (data) => {
     if (data.status === "running") {
       setRunningState(true);
@@ -47,6 +65,9 @@
     }
   });
 
+  /**
+   * Handle turtle commands
+   */
   socket.on("execute", (command) => {
     executeTurtleCommand(command);
   });

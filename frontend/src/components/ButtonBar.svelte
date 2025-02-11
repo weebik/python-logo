@@ -15,20 +15,31 @@
   let input;
   let files = $state();
 
+  /**
+   * Run turtle code
+   */
   function handleRun() {
     runTurtle(getCode());
   }
 
+  /**
+   * Stop turtle code
+   */
   function handleStop() {
     stopTurtle();
   }
 
+  /**
+   * Resets turtle canvas
+   */
   function handleReset() {
     stopTurtle();
     resetTurtle();
   }
 
-  // handleUpload
+  /**
+   * Handle code from file upload
+   */
   $effect(() => {
     if (files) {
       const reader = new FileReader();
@@ -41,6 +52,9 @@
     }
   });
 
+  /**
+   * Handle code from textarea download
+   */
   function handleDownload() {
     const blob = new Blob([getCode().trim()], { type: "text/plain" });
     const a = document.createElement("a");
