@@ -9,6 +9,7 @@
   export function toastSuccess(message) {
     toast.push({
       component: {
+        // @ts-ignore
         src: Icon,
         props: { name: "check", style: "color: white", message: message },
       },
@@ -30,6 +31,7 @@
   export function toastError(message) {
     toast.push({
       component: {
+        // @ts-ignore
         src: Icon,
         props: { name: "alert", style: "color: white", message: message },
       },
