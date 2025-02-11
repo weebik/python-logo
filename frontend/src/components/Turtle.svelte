@@ -1,17 +1,27 @@
 <script module>
   import { emitRun, emitStop } from "./Socket.svelte";
-  import { logToConsole } from "./Textarea.svelte";
+  import { logToConsole } from "./Console.svelte";
 
   let turtle;
 
+  /**
+   * Run turtle code
+   * @param code
+   */
   export function runTurtle(code) {
     emitRun(code);
   }
 
+  /**
+   * Stop turtle code
+   */
   export function stopTurtle() {
     emitStop();
   }
 
+  /**
+   * Resets turtle canvas
+   */
   export function resetTurtle() {
     turtle.goto(0, 0);
     turtle.setColor("white");
@@ -21,6 +31,10 @@
     turtle.clear();
   }
 
+  /**
+   * Executes command on frontend recived from server
+   * @param command
+   */
   export function executeTurtleCommand(command) {
     switch (command.name) {
       case "forward":
@@ -70,6 +84,9 @@
 
   let turtleCanvas;
 
+  /**
+   * Turtle shape vertices
+   */
   const turtleVertices = [
     { x: -5, y: 9 },
     { x: -3, y: 10 },
@@ -95,10 +112,17 @@
     { x: -5, y: 9 },
   ];
 
+  /**
+   * Turtle options
+   */
   let turtleOptions = {
     defaultColor: "white",
     shape: turtleVertices,
   };
+
+  /**
+   * Turtle instance
+   */
 
   onMount(() => {
     const ctx = turtleCanvas.getContext("2d", { willReadFrequently: true });
@@ -111,16 +135,15 @@
 </script>
 
 <div
-  class="right-container d-flex flex-col align-items-center justify-content-center p-5"
+  class="canvas-container d-flex flex-col align-items-center justify-content-center p-5"
 >
   <canvas class={$themeColor} bind:this={turtleCanvas} width="600" height="600"
   ></canvas>
 </div>
 
 <style>
-  .right-container {
-    flex: 1;
-    width: 100%;
+  .canvas-container {
+    height: calc(100vh - 140px);
   }
   canvas {
     width: 100%;

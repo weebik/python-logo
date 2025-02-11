@@ -2,6 +2,10 @@
   import { toast } from "@zerodevx/svelte-toast";
   import Icon from "./Icon.svelte";
 
+  /**
+   * Display a success toast
+   * @param message
+   */
   export function toastSuccess(message) {
     toast.push({
       component: {
@@ -19,6 +23,10 @@
     });
   }
 
+  /**
+   * Display an error toast
+   * @param message
+   */
   export function toastError(message) {
     toast.push({
       component: {
