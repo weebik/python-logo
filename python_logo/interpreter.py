@@ -172,6 +172,7 @@ class Interpreter:
         yield command
 
     def _handle_setpencolor(self, command: dict) -> Generator[dict, None, None]:
+        """Handles 'setpencolor' commands."""
         if command["color"] not in self._colors:
             raise InterpreterInvalidColorError(
                 color=command["color"],
@@ -180,15 +181,18 @@ class Interpreter:
         yield command
 
     def _handle_setpensize(self, command: dict) -> Generator[dict, None, None]:
+        """Handles 'setpensize' commands."""
         command["value"] = self._evaluate(command["value"])
         yield command
 
     def _handle_print(self, command: dict) -> Generator[dict, None, None]:
+        """Handles 'print' commands."""
         command["value"] = str(self._evaluate(command["value"]))
         if command["value"]:
             yield command
 
     def _handle_list(self, command: dict) -> Generator[dict, None, None]:
+        """Handles 'list' commands."""
         try:
             if command["list_name"] in self._lists:
                 xs = self._lists[command["list_name"]]
