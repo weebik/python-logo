@@ -18,14 +18,17 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install dependencies
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v2
+
+      - name: Install the project
         run: |
-          pip install sphinx furo
+          poetry install
 
       - name: Build docs
         working-directory: docs
         run: |
-          make html
+          poetry run make html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
