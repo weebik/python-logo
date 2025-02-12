@@ -9,7 +9,7 @@
 project = "python-logo"
 copyright = "2025, Yaryna Rachkevych, Mikołaj Kalitka, Krystian Ćwikliński, Magda Tytoń"
 author = "Yaryna Rachkevych, Mikołaj Kalitka, Krystian Ćwikliński, Magda Tytoń"
-release = "0.5"
+release = "0.5.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

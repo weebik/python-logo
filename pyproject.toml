@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-logo"
-version = "0.1.0"
+version = "0.5.0"
 description = "Python Logo interpreter with web-based frontend."
 authors = [
   "YarynaRachkevych1 <rarynka28@gmail.com>",
