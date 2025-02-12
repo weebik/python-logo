@@ -30,7 +30,7 @@ jobs:
         run: |
           npm run build --prefix frontend
 
-      - name: Install poetry
+      - name: Install Poetry
         uses: abatilo/actions-poetry@v2
 
       - name: Install the project
