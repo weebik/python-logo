@@ -23,6 +23,8 @@
   <p align="center">
     Python Logo interpreter with frontend made in Svelte.
     <br />
+    <a href="https://yarynarachkevych1.github.io/python-logo"><strong>Explore the docs »</strong></a>
+    <br />
     <br />
     <a href="https://github.com/YarynaRachkevych1/python-logo">View Demo</a>
     ·
