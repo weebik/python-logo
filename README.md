@@ -77,7 +77,9 @@ This project is created for the *Innovative Projects by Nokia* subject on [UWR][
 <a id="features"></a>
 ### Features
 
-- **TO-DO**
+- Logo parser using **Lark**.
+- Custom interpreter for **Logo** commands.
+- Frontend made in **Svelte**.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
