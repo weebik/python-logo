@@ -168,8 +168,11 @@ class Interpreter:
 
     def _handle_movement(self, command: dict) -> Generator[dict, None, None]:
         """Handles movement commands like forward, backward, left, right."""
-        command["value"] = self._evaluate(command["value"])
-        yield command
+        new_command = {
+            "name": command["name"],
+            "value": self._evaluate(command["value"]),
+        }
+        yield new_command
 
     def _handle_setpencolor(self, command: dict) -> Generator[dict, None, None]:
         """Handles 'setpencolor' commands."""
@@ -182,14 +185,19 @@ class Interpreter:
 
     def _handle_setpensize(self, command: dict) -> Generator[dict, None, None]:
         """Handles 'setpensize' commands."""
-        command["value"] = self._evaluate(command["value"])
-        yield command
+        new_command = {
+            "name": command["name"],
+            "value": self._evaluate(command["value"]),
+        }
+        yield new_command
 
     def _handle_print(self, command: dict) -> Generator[dict, None, None]:
         """Handles 'print' commands."""
-        command["value"] = str(self._evaluate(command["value"]))
-        if command["value"]:
-            yield command
+        new_command = {
+            "name": command["name"],
+            "value": self._evaluate(command["value"]),
+        }
+        yield new_command
 
     def _handle_list(self, command: dict) -> Generator[dict, None, None]:
         """Handles 'list' commands."""
