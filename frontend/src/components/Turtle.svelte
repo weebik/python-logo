@@ -126,7 +126,6 @@
   /**
    * Turtle instance
    */
-
   onMount(() => {
     const ctx = turtleCanvas.getContext("2d", { willReadFrequently: true });
     turtle = new Turtle(ctx, turtleOptions);
